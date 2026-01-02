@@ -1,10 +1,12 @@
-import { Suspense } from 'react'
+import { useState, Suspense } from 'react'
 import { Canvas } from '@react-three/fiber'
 import Loader from '../components/Loader'
 
 import Island from '../models/Island';
 
 const Home = () => {
+    const [isRotating, setIsRotating] = useState(false);
+
     const adjustIslandForScreenSize = () => {
         let screenScale = null;
         let screenPosition = [-1.8, -12, -43]
@@ -24,21 +26,22 @@ const Home = () => {
     return (
         <section className="w-full h-screen relative">
             <Canvas 
-            className="w-full h-screen bg-transparent"
-            camera={{ near: 0.1, far: 1000 }} 
+                className={`w-full h-screen bg-transparent ${isRotating ? 
+                'cursor-grabbing' : 'cursor-grab'}`}
+                camera={{ near: 0.1, far: 1000 }} 
             >
                 <Suspense fallback={<Loader />}>
                 <directionalLight />
                 <ambientLight />
-                <pointLight />
-                <spotLight />
                 <hemisphereLight />
 
-                    <Island
-                    position={islandPosition}
-                    scale={islandScale}
-                    rotation={islandRotation}
-                    />
+                <Island
+                position={islandPosition}
+                scale={islandScale}
+                rotation={islandRotation}
+                isRotating={isRotating}
+                setIsRotating={setIsRotating}
+                />
                 </Suspense>
             </Canvas>
         </section>
