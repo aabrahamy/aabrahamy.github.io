@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom'
 const Navbar = () => {
     return (
         <header className="header">
-            <NavLink to="/" className="w-16 h-10 bg-white items-center justify-center flex font-bold">
+            <NavLink to="/" className="w-16 h-10 bg-transparent items-center justify-center flex font-bold">
               <p className = "blue-gradient_text">Home</p>
             </NavLink>
             <nav className="flex text-1g gap-7 font-medium">
