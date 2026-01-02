@@ -1,21 +1,25 @@
-import React, { useRef, useEffect } from 'react'
+import { useRef, useEffect} from 'react'
 import { useGLTF } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
 import { a } from '@react-spring/three'
 
 import islandScene from "../assets/3d/cozy_day.glb";
 
-const Island =forwardRef((props, ref) => {
-  const { nodes, materials } = useGLTF(islandScene);
+const Island =(props) => {
+  const islandRef = useRef()
 
+  const { nodes, materials } = useGLTF(islandScene)
   return (
-    <a.group ref={ref} {...props} dispose={null}>
+    <a.group ref={islandRef} {...props} dispose={null}>
       <group position={[-0.153, 0.878, -1.464]} scale={[1, 0.898, 1]}>
         <mesh
+
           geometry={nodes.Object_20.geometry}
           material={materials.big_shapes}
         />
         <mesh
+          
+          
           geometry={nodes.Object_21.geometry}
           material={materials.outline_culled}
         />
@@ -2625,7 +2629,8 @@ const Island =forwardRef((props, ref) => {
       />
     </a.group>
   )
-})
+}
+
 
 export default Island;
 
