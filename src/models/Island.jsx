@@ -13,8 +13,8 @@ const Island =({ isRotating, setIsRotating, setActiveHotspot, ...props}) => {
 
  
   const hotspots = [
-    { id: 'journey', position: [-0.84, 3.076, -1.424], title: 'My Journey', content: 'Snapshots from my learning journey — projects, experiments, and milestones.' },
-    { id: 'skills', position: [2.025, 0.504, 0.487], title: 'Skills', content: 'A quick overview of the languages, frameworks, and tools I use.' },
+    { id: 'journey', position: [-0.84, 3.076, -1.424], title: 'My Journey', content: 'I had little to no experience with development before college, but during my first semester at Purdue as a computer engineering student, I was able to explore my interests and build a foundation through independent study to learn programming, coursework, and extracurricular activities.' },
+    { id: 'skills', position: [2.025, 0.504, 0.487], title: 'Skills', content: 'I’m an engineering student who enjoys working at the intersection of software, hardware, and design. I have experience with Arduino projects and web development. I use languages like Java, JavaScript, C#, and MATLAB, along with tools like Figma, Azure, and HTML/CSS, to build well-documented and meaningful solutions.' },
     { id: 'mementos', position: [-0.624, 2.744, 1.596], title: 'Mementos', content: 'I was always interested in using 3D models for my projects, and this allowed me to incorporate a fun and adorable model as a centerpiece for this website. The best part of this is being able to integrate my interests, such as Wave to Earth’s music, with something that represents me!' },
   ];
 
@@ -29,7 +29,13 @@ const Island =({ isRotating, setIsRotating, setActiveHotspot, ...props}) => {
 
   const handlePointerDown = (e) => {
     
-    e.preventDefault();
+    // Use nativeEvent.preventDefault when available to avoid ThreeEvent TypeErrors
+    if (e.nativeEvent && typeof e.nativeEvent.preventDefault === 'function') {
+      e.nativeEvent.preventDefault();
+    } else if (typeof e.preventDefault === 'function') {
+      e.preventDefault();
+    }
+
     setIsRotating(true);
     isPointerDown.current = true;
 
@@ -39,21 +45,26 @@ const Island =({ isRotating, setIsRotating, setActiveHotspot, ...props}) => {
 
     lastX.current = clientX;
 
-   
+    // remove immediate nudge; rely on pointermove to set rotation/speed synchronously
     if (e.pointerId && e.target && e.target.setPointerCapture) {
       try { e.target.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
     }
+
+    // Also listen on window while pointer is down so dragging stays smooth if pointer leaves canvas
+    try { window.addEventListener('pointermove', handlePointerMove, { passive: false }); } catch (err) { /* ignore */ }
   }
 
   const handlePointerUp = (e) => {
 
-    e.preventDefault();
+    try { if (e && typeof e.preventDefault === 'function') e.preventDefault(); } catch (err) {}
     setIsRotating(false);
     isPointerDown.current = false;
 
     if (e.pointerId && e.target && e.target.releasePointerCapture) {
       try { e.target.releasePointerCapture(e.pointerId); } catch (err) { /* ignore */ }
     }
+
+    try { window.removeEventListener('pointermove', handlePointerMove); } catch (err) { /* ignore */ }
   }
 
   const handlePointerCancel = (e) => {
@@ -63,43 +74,51 @@ const Island =({ isRotating, setIsRotating, setActiveHotspot, ...props}) => {
     if (e.pointerId && e.target && e.target.releasePointerCapture) {
       try { e.target.releasePointerCapture(e.pointerId); } catch (err) { /* ignore */ }
     }
+
+    try { window.removeEventListener('pointermove', handlePointerMove); } catch (err) { /* ignore */ }
   }
 
   const handlePointerMove = (e) => {
-   
-    e.preventDefault();
+    // Only prevent default while actively dragging to avoid errors in passive listeners
+    if (!isPointerDown.current) return;
+    try { if (e && e.cancelable && typeof e.preventDefault === 'function') e.preventDefault(); } catch (err) {}
 
-
-    if(isPointerDown.current) {
-      const clientX = e.touches
+    const clientX = e.touches
       ? e.touches[0].clientX 
       : e.clientX
-      
-      const delta = (clientX - lastX.current) / viewport.width;
 
-      islandRef.current.rotation.y += delta * 0.01 * Math.PI;
-      lastX.current = clientX;
-      rotationSpeed.current = delta * 0.01 * Math.PI;
-    }
+    const delta = (clientX - lastX.current) / viewport.width;
+
+    islandRef.current.rotation.y += delta * 0.01 * Math.PI;
+    lastX.current = clientX;
+    rotationSpeed.current = delta * 0.01 * Math.PI;
+  }
+
+  const handleWheel = (e) => {
+    try { e.preventDefault(); } catch (err) {}
+    // Use deltaX if available for horizontal trackpad scroll, otherwise use deltaY
+    const raw = e.deltaX || e.deltaY || 0;
+    const factor = 0.002; // tuning scalar for good feel
+    const delta = raw * factor;
+    islandRef.current.rotation.y += delta;
+    rotationSpeed.current = delta;
   }
 
   const handleKeyDown = (event) => {
     if (event.key === "ArrowLeft") {
-      if (!isRotating) setIsRotating(true);
-
+      // Keyboard left should rotate left (positive)
       islandRef.current.rotation.y += 0.005 * Math.PI;
       rotationSpeed.current = 0.007;
     } else if (event.key === "ArrowRight") {
-      if (!isRotating) setIsRotating(true);
-
-      islandRef.current.rotation.y -= 0.005 * Math.PI;
+      // Keyboard right should rotate right (negative)
+      islandRef.current.rotation.y += -0.005 * Math.PI;
       rotationSpeed.current = -0.007;
     }
   }
  
   const handleKeyUp = (event) => {
     if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
-      setIsRotating(false);
+      // keep isRotating unchanged on keyup — keyboard shouldn't toggle drag state
     }
   }
 
@@ -134,27 +153,7 @@ const Island =({ isRotating, setIsRotating, setActiveHotspot, ...props}) => {
     islandRef.current.rotation.y += rotationSpeed.current;
 
   } else {
-    const rotation = islandRef.current.rotation.y;
-
-    const normalizedRotation =
-        ((rotation % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
-
-      switch (true) {
-        case normalizedRotation >= 5.45 && normalizedRotation <= 5.85:
-          setCurrentStage(4);
-          break;
-        case normalizedRotation >= 0.85 && normalizedRotation <= 1.3:
-          setCurrentStage(3);
-          break;
-        case normalizedRotation >= 2.4 && normalizedRotation <= 2.6:
-          setCurrentStage(2);
-          break;
-        case normalizedRotation >= 4.25 && normalizedRotation <= 4.75:
-          setCurrentStage(1);
-          break;
-        default:
-          setCurrentStage(null);
-    }
+    // Stage detection disabled — `setCurrentStage` not provided.
   }
 })
 
@@ -167,6 +166,12 @@ const Island =({ isRotating, setIsRotating, setActiveHotspot, ...props}) => {
     canvas.addEventListener('pointercancel', handlePointerCancel);
     
     canvas.addEventListener('pointermove', handlePointerMove, { passive: false });
+    if (typeof handleWheel === 'function') {
+      canvas.addEventListener('wheel', handleWheel, { passive: false });
+    } else {
+      // handleWheel not defined yet in some builds; skipping wheel listener
+      console.warn('handleWheel not available; skipping wheel listener')
+    }
     document.addEventListener('keydown', handleKeyDown);
     document.addEventListener('keyup', handleKeyUp);
 
@@ -175,6 +180,10 @@ const Island =({ isRotating, setIsRotating, setActiveHotspot, ...props}) => {
       canvas.removeEventListener('pointerup', handlePointerUp);
       canvas.removeEventListener('pointercancel', handlePointerCancel);
       canvas.removeEventListener('pointermove', handlePointerMove, { passive: false });
+      try { window.removeEventListener('pointermove', handlePointerMove); } catch (err) { /* ignore */ }
+      try {
+        if (typeof handleWheel === 'function') canvas.removeEventListener('wheel', handleWheel, { passive: false });
+      } catch (err) { /* ignore */ }
       document.removeEventListener('keydown', handleKeyDown);
       document.removeEventListener('keyup', handleKeyUp);
       canvas.style.touchAction = '';
@@ -240,14 +249,14 @@ const Island =({ isRotating, setIsRotating, setActiveHotspot, ...props}) => {
           }}
         >
         
-          <sphereGeometry args={[0.12, 20, 20]} />
+          <sphereGeometry args={[0.16, 20, 20]} />
           <meshStandardMaterial color="#ff7a59" emissive="#ff7a59" emissiveIntensity={0.9} transparent opacity={0.95} />
 
           <mesh
             ref={(el) => { hotspotGlowRefs.current[h.id] = el; }}
             raycast={() => null}
           >
-            <sphereGeometry args={[0.18, 32, 32]} />
+            <sphereGeometry args={[0.24, 32, 32]} />
             <meshBasicMaterial color="#ffb86b" transparent opacity={0.12} blending={THREE.AdditiveBlending} depthWrite={false} />
           </mesh>
         </mesh>
