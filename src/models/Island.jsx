@@ -11,14 +11,14 @@ const Island =({ isRotating, setIsRotating, setActiveHotspot, ...props}) => {
   const { gl, viewport } = useThree();
   const { nodes, materials } = useGLTF(islandScene);
 
-  // Define clickable hotspots (positioned near interesting parts of the model)
+ 
   const hotspots = [
-    { id: 'notes', position: [-0.84, 3.076, -1.424], title: 'Notes', content: 'A collection of notes and ideas.' },
-    { id: 'cat', position: [2.025, 0.504, 0.487], title: 'Catsu', content: 'The cat hanging out on the island.' },
-    { id: 'details', position: [-0.624, 2.744, 1.596], title: 'Details', content: 'Some small details and props.' },
+    { id: 'journey', position: [-0.84, 3.076, -1.424], title: 'My Journey', content: 'Snapshots from my learning journey — projects, experiments, and milestones.' },
+    { id: 'skills', position: [2.025, 0.504, 0.487], title: 'Skills', content: 'A quick overview of the languages, frameworks, and tools I use.' },
+    { id: 'mementos', position: [-0.624, 2.744, 1.596], title: 'Mementos', content: 'I was always interested in using 3D models for my projects, and this allowed me to incorporate a fun and adorable model as a centerpiece for this website. The best part of this is being able to integrate my interests, such as Wave to Earth’s music, with something that represents me!' },
   ];
 
-  // Refs to hotspot meshes so we can animate/scale them
+  
   const hotspotRefs = useRef({});
   const hotspotGlowRefs = useRef({});
 
@@ -28,7 +28,7 @@ const Island =({ isRotating, setIsRotating, setActiveHotspot, ...props}) => {
   const isPointerDown = useRef(false);
 
   const handlePointerDown = (e) => {
-    // Do not stop propagation here so mesh pointer events can receive the event first
+    
     e.preventDefault();
     setIsRotating(true);
     isPointerDown.current = true;
@@ -39,14 +39,14 @@ const Island =({ isRotating, setIsRotating, setActiveHotspot, ...props}) => {
 
     lastX.current = clientX;
 
-    // Ensure we continue receiving pointermove events even if pointer leaves the canvas
+   
     if (e.pointerId && e.target && e.target.setPointerCapture) {
       try { e.target.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
     }
   }
 
   const handlePointerUp = (e) => {
-    // allow mesh events to handle pointer interactions
+
     e.preventDefault();
     setIsRotating(false);
     isPointerDown.current = false;
@@ -57,7 +57,7 @@ const Island =({ isRotating, setIsRotating, setActiveHotspot, ...props}) => {
   }
 
   const handlePointerCancel = (e) => {
-    // allow mesh events to handle pointer cancels
+    
     isPointerDown.current = false;
     setIsRotating(false);
     if (e.pointerId && e.target && e.target.releasePointerCapture) {
@@ -66,10 +66,10 @@ const Island =({ isRotating, setIsRotating, setActiveHotspot, ...props}) => {
   }
 
   const handlePointerMove = (e) => {
-    // Do not stop propagation so mesh pointer events can run
+   
     e.preventDefault();
 
-    // Use the local ref so we don't depend on a possibly-stale React state value
+
     if(isPointerDown.current) {
       const clientX = e.touches
       ? e.touches[0].clientX 
@@ -104,21 +104,21 @@ const Island =({ isRotating, setIsRotating, setActiveHotspot, ...props}) => {
   }
 
   useFrame((state) => {
-    // animate hotspot markers (pulse)
+  
     const t = state.clock.getElapsedTime();
     Object.keys(hotspotRefs.current).forEach((key, idx) => {
       const ref = hotspotRefs.current[key];
       const glow = hotspotGlowRefs.current[key];
-      // marker pulse
+    
       if (ref && ref.visible !== false) {
         const pulse = 0.08 * Math.sin(t * 2 + idx);
         const base = 1.0;
         ref.scale.setScalar(base + pulse);
       }
-      // glow animation (scale + subtle opacity change)
+      
       if (glow && glow.material) {
         const glowPulse = 0.12 * Math.sin(t * 1.6 + idx);
-        // reduce amplitude so glow stays subtle
+   
         glow.scale.setScalar(1.0 + glowPulse * 2);
         glow.material.opacity = 0.12 + 0.03 * Math.sin(t * 2 + idx);
       }
@@ -160,13 +160,12 @@ const Island =({ isRotating, setIsRotating, setActiveHotspot, ...props}) => {
 
   useEffect(() => {
     const canvas = gl.domElement;
-    // Prevent default touch gestures (scroll/pinch) so pointer events fire continuously
     canvas.style.touchAction = 'none';
 
     canvas.addEventListener('pointerdown', handlePointerDown);
     canvas.addEventListener('pointerup', handlePointerUp);
     canvas.addEventListener('pointercancel', handlePointerCancel);
-    // Use non-passive so preventDefault works on browsers that respect passive listeners
+    
     canvas.addEventListener('pointermove', handlePointerMove, { passive: false });
     document.addEventListener('keydown', handleKeyDown);
     document.addEventListener('keyup', handleKeyUp);
@@ -208,16 +207,19 @@ const Island =({ isRotating, setIsRotating, setActiveHotspot, ...props}) => {
           position={h.position}
           ref={(el) => { hotspotRefs.current[h.id] = el; }}
           onPointerDown={(e) => {
-            // prevent the rotation when clicking a hotspot
+           
             e.stopPropagation();
-            e.preventDefault();
+            
+            if (e.nativeEvent && typeof e.nativeEvent.preventDefault === 'function') {
+              e.nativeEvent.preventDefault();
+            }
             if (setIsRotating) setIsRotating(false);
             if (setActiveHotspot) setActiveHotspot(h);
           }}
           onPointerOver={(e) => {
-            // change the canvas cursor so it reflects being clickable
+           
             if (gl && gl.domElement) gl.domElement.style.cursor = 'pointer';
-            // enlarge a bit to indicate hover
+            
             const ref = hotspotRefs.current[h.id];
             if (ref) ref.scale.setScalar(1.4);
             const glow = hotspotGlowRefs.current[h.id];
@@ -237,11 +239,10 @@ const Island =({ isRotating, setIsRotating, setActiveHotspot, ...props}) => {
             }
           }}
         >
-          {/* slightly larger, more emissive marker for better visibility */}
+        
           <sphereGeometry args={[0.12, 20, 20]} />
           <meshStandardMaterial color="#ff7a59" emissive="#ff7a59" emissiveIntensity={0.9} transparent opacity={0.95} />
 
-          {/* soft additive glow that doesn't capture pointer events */}
           <mesh
             ref={(el) => { hotspotGlowRefs.current[h.id] = el; }}
             raycast={() => null}

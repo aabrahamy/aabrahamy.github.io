@@ -184,3 +184,14 @@ body:has(.card[data-color="green"]:hover) {
   box-shadow: 0.6vmin 0.6vmin #fff, 1vmin 1vmin #d2e4ff, 1vmin 1vmin #d2e4ff,
     0.65vmin 1vmin #d2e4ff, 1vmin 0.65vmin #d2e4ff;
 }
+
+/* Responsive audio label: hide text on small screens */
+.audio-label__text { display: inline-block; }
+@media (max-width: 640px) {
+  .audio-label__text { display: none; }
+  .audio-label { right: 12px !important; bottom: 12px !important; padding: 4px !important; }
+}
+
+/* Hotspot popup responsive text */
+.hotspot-popup__text { font-size: clamp(13px, 2.2vw, 16px); }
+.hotspot-popup-title { font-size: clamp(14px, 2.5vw, 18px); margin: 6px 0; font-weight: 700; }

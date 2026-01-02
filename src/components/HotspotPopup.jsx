@@ -1,7 +1,16 @@
 import React from 'react'
+import TypingAnimation from './TypingAnimation'
+
+const styleMap = {
+  journey: { bg: '#eaffd8', rotate: -4 },
+  skills: { bg: '#eaffd8', rotate: 3 },
+  mementos: { bg: '#eaffd8', rotate: -2 },
+  default: { bg: '#fff7b5', rotate: 0 }
+}
 
 const HotspotPopup = ({ hotspot, onClose }) => {
   if (!hotspot) return null;
+  const cfg = styleMap[hotspot.id] || styleMap.default;
 
   return (
     <div style={{
@@ -13,22 +22,39 @@ const HotspotPopup = ({ hotspot, onClose }) => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      background: 'rgba(0,0,0,0.35)',
+      background: 'transparent',
       zIndex: 50,
-    }}>
+    }} onClick={onClose}>
       <div style={{
-        background: 'white',
+        width: 'clamp(220px, 70%, 360px)',
+        maxWidth: '90%',
+        transform: `rotate(${cfg.rotate}deg)`,
+        background: cfg.bg,
         padding: 20,
-        borderRadius: 12,
-        maxWidth: 420,
-        width: '90%',
-        boxShadow: '0 10px 30px rgba(0,0,0,0.2)'
-      }}>
-        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-          <h3 style={{margin: 0}}>{hotspot.title}</h3>
-          <button onClick={onClose} style={{border: 'none', background: 'transparent', fontSize: 18, cursor: 'pointer'}}>✕</button>
-        </div>
-        <p style={{marginTop: 12}}>{hotspot.content}</p>
+        borderRadius: 8,
+        boxShadow: '0 12px 30px rgba(0,0,0,0.18)',
+        position: 'relative',
+        border: '1px solid rgba(0,0,0,0.06)'
+      }} onClick={(e) => e.stopPropagation()}>
+
+        {/* little sticky tape */}
+        <div style={{
+          position: 'absolute',
+          left: '50%',
+          transform: 'translateX(-50%) rotate(-2deg)',
+          top: -12,
+          width: 60,
+          height: 14,
+          background: '#f1e28a',
+          borderRadius: 3,
+          boxShadow: 'inset 0 -2px 0 rgba(0,0,0,0.06)'
+        }} />
+
+        <button onClick={onClose} style={{position: 'absolute', right: 8, top: 8, border: 'none', background: 'transparent', fontSize: 18, cursor: 'pointer'}}>✕</button>
+
+        <h3 className="hotspot-popup-title" style={{margin: '6px 0', fontSize: 'clamp(14px, 2.5vw, 18px)', fontWeight: 700}}>{hotspot.title}</h3>
+        <TypingAnimation className="hotspot-popup__text" speed={28}>{hotspot.content}</TypingAnimation>
+
       </div>
     </div>
   )

@@ -1,11 +1,13 @@
 import { useState, Suspense } from 'react'
 import { Canvas } from '@react-three/fiber'
 import Loader from '../components/Loader'
+import HotspotPopup from '../components/HotspotPopup'
 
 import Island from '../models/Island';
 
 const Home = () => {
     const [isRotating, setIsRotating] = useState(false);
+    const [activeHotspot, setActiveHotspot] = useState(null);
 
     const adjustIslandForScreenSize = () => {
         let screenScale = null;
@@ -41,9 +43,17 @@ const Home = () => {
                 rotation={islandRotation}
                 isRotating={isRotating}
                 setIsRotating={setIsRotating}
+                setActiveHotspot={setActiveHotspot}
                 />
                 </Suspense>
             </Canvas>
+
+            {activeHotspot && (
+                <HotspotPopup
+                  hotspot={activeHotspot}
+                  onClose={() => setActiveHotspot(null)}
+                />
+            )}
         </section>
     )
 }
