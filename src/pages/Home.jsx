@@ -15,7 +15,9 @@ const Home = () => {
         let rotation = [0.1, 4.7, 0];
 
         if(window.innerWidth < 768) {
-            screenScale = [8, 8, 8];
+            // Scale down and pull back on mobile so the scene isn't cramped
+            screenScale = [6.5, 6.5, 6.5];
+            screenPosition = [-1.8, -13, -48];
         } else {
             screenScale = [9, 9, 9];
         }
