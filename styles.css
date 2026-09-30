@@ -61,7 +61,7 @@
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 
   /* ---- Film grain --------------------------------------------------------- */
-  --grain-opacity: 0.05;        /* over the paper folder (0.08 to 0.12 is subtle) */
+  --grain-opacity: 0.00;        /* over the paper folder (0.08 to 0.12 is subtle) */
   --grain-opacity-bg: 0.00;    /* over the black background */
   --grain-speed: 0.9s;         /* one full cycle of 8 jumps: 0.9s ≈ 9 changes/sec; higher = slower */
   --grain-size: 400px;         /* texture tile size (js also reads this) */
