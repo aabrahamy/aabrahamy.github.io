@@ -89,6 +89,7 @@
         im.className = "stamp-img" + (idx === 0 ? " is-active" : "");
         im.alt = idx === 0 ? (a.stampAlt || "") : "";
         im.decoding = "async";
+        if (idx === 0) im.fetchPriority = "high";   // the visible photo; the rest can wait
         im.draggable = false;
         im.src = asset(p.src);
         // crop: object-position picks which part of the photo stays inside the square

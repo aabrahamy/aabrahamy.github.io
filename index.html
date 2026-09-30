@@ -43,6 +43,13 @@
       }
       window.SITE_BASE = base;
       document.write('<link rel="stylesheet" href="' + base + 'styles.css">');
+      // About is the landing view: start fetching its first stamp photo now
+      // instead of waiting for the scripts to build the <img> (keep in sync
+      // with the first entry of stampPhotos in content.js).
+      var tab = location.pathname.slice(base.length).split("/")[0];
+      if (!tab || tab === "about" || ROUTES.indexOf(tab) < 0) {
+        document.write('<link rel="preload" as="image" href="' + base + 'assets/about/1.jpg" fetchpriority="high">');
+      }
     })();
   </script>
 </head>
