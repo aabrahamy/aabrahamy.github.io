@@ -177,7 +177,7 @@ endmodule`
         },
         { type: "section", label: "Results", text: "[EDIT] Tests passing, CPI, max clock frequency, resource usage." },
         { type: "section", label: "What I learned", text: "[EDIT] One or two honest takeaways." }, */
-        { type: "links", items: [ { label: "GitHub", href: "https://github.com/your-handle/rv32i-cpu" },  ] },
+        { type: "links", items: [ { label: "GitHub", href: "https://github.com/aabrahamy/RV32I_CPU" },  ] },
       ],
     },
 
