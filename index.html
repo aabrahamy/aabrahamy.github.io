@@ -1,0 +1,121 @@
+<!doctype html>
+<!--
+  index.html: the page shell. You shouldn't need to edit this file.
+  • Content (text, projects, images, links) → content.js
+  • Colors, fonts, sizes, motion             → top of styles.css
+  • Motion / trail / melt settings (JS)      → top of js/core.js
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Ani Abrahamyan</title>
+  <meta name="description" content="Ani Abrahamyan, Computer Engineering student at Purdue. Digital design, computer architecture, photography and painting.">
+  <meta name="theme-color" content="#0a0a0a">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23dde2e6'/%3E%3Ctext x='16' y='23' font-family='monospace' font-weight='700' font-size='18' text-anchor='middle' fill='%23141414'%3EA%3C/text%3E%3C/svg%3E">
+
+  <!-- Fonts (Google Fonts). To swap one, change it here AND the matching
+       --font-* variable at the top of styles.css. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400..900&family=Geist:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Pinyon+Script&family=Reenie+Beanie&display=swap">
+
+  <!-- Works out where the site lives ("/" or "/<repo>/" on GitHub Pages) so
+       deep links like /projects/rv32i-cpu load correctly, restores the path
+       after a 404.html redirect, then loads the stylesheet from there. -->
+  <script>
+    (function () {
+      var ROUTES = ["about", "projects", "playground", "contact"];
+      var base;
+      if (location.protocol === "file:") {
+        base = location.pathname.replace(/[^/]*$/, "");
+      } else {
+        var parts = location.pathname.split("/").slice(1), keep = [];
+        for (var i = 0; i < parts.length; i++) {
+          if (ROUTES.indexOf(parts[i]) >= 0) break;
+          keep.push(parts[i]);
+        }
+        var last = keep[keep.length - 1];
+        if (keep.length && (last === "" || /\.html?$/i.test(last))) keep.pop();
+        base = "/" + keep.join("/") + (keep.length ? "/" : "");
+        var p = new URLSearchParams(location.search).get("p");
+        if (p !== null) history.replaceState(null, "", base + p.replace(/^\/+/, "") + location.hash);
+      }
+      window.SITE_BASE = base;
+      document.write('<link rel="stylesheet" href="' + base + 'styles.css">');
+    })();
+  </script>
+</head>
+<body>
+  <!-- film grain layers (texture made in js/effects.js; tune in styles.css) -->
+  <div class="grain grain--bg" aria-hidden="true"></div>
+
+  <!-- faint PCB behind the folder + the pink cursor glow (js/pcb.js). DOM order matters:
+       grain → board → glow → folder. -->
+  <svg class="pcb" id="pcb" aria-hidden="true" focusable="false" preserveAspectRatio="xMidYMid slice"></svg>
+  <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
+
+  <!-- handwritten hint in the bottom-left of the black area (js/pcb.js places it + draws the arrow) -->
+  <div class="pcb-hint" id="pcbHint" aria-hidden="true">
+    <p class="pcb-hint__text"><span>psst…</span><span class="is-2">hover over the board</span></p>
+    <svg class="pcb-hint__arrow" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></svg>
+  </div>
+  <a class="skip-link" href="#main" data-skip>Skip to content</a>
+
+  <!-- the melting-title SVG filters get added in here by js/effects.js -->
+  <svg class="svg-defs" id="svgDefs" aria-hidden="true" focusable="false" width="0" height="0"></svg>
+
+  <main class="stage" id="main">
+    <div class="folder" id="folder" data-section="about" data-view="about">
+      <div class="folder__back" aria-hidden="true"></div>
+
+      <!-- Hardware-style nav pins (links, built by js/main.js) -->
+      <nav class="pins" id="pins" aria-label="Sections"></nav>
+
+      <!-- The page. Views are swapped in and out of #views. -->
+      <article class="page" id="page">
+        <div class="page__paper" aria-hidden="true">
+          <svg class="page__traces" id="traces"></svg>
+        </div>
+        <div class="page__views" id="views">
+          <noscript>
+            <div class="view"><p style="padding:24px">This site needs JavaScript to flip through its pages.</p></div>
+          </noscript>
+        </div>
+      </article>
+
+      <!-- Handwritten note beside the PROJECTS tab (About page, wide screens) -->
+      <p class="annotation" aria-hidden="true">
+        <svg class="annotation__arrow" viewBox="0 0 64 30" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M62 17c-9-9-19 5-28-2S19 9 13 13 6 17 3 15"/>
+          <path d="M10 8 3 15l9 5"/>
+        </svg>
+        <span class="annotation__text" id="annotationText"></span>
+      </p>
+    </div>
+  </main>
+
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- Pencil trail that follows the cursor (desktop only, js/effects.js) -->
+  <canvas class="ink-trail" id="inkTrail" aria-hidden="true"></canvas>
+
+  <!-- Lightbox for Playground photos + art -->
+  <dialog class="lightbox" id="lightbox" aria-label="Image viewer">
+    <button class="lightbox__close mono-link" type="button" data-lb-close>Close <span aria-hidden="true">×</span></button>
+    <button class="lightbox__nav lightbox__nav--prev" type="button" data-lb-step="-1" aria-label="Previous image">←</button>
+    <figure class="lightbox__figure">
+      <div class="lightbox__img" id="lightboxImg"></div>
+      <figcaption class="lightbox__cap" id="lightboxCap"></figcaption>
+    </figure>
+    <button class="lightbox__nav lightbox__nav--next" type="button" data-lb-step="1" aria-label="Next image">→</button>
+  </dialog>
+
+  <!-- Scripts load from the site base too (see the <head> script). -->
+  <script>
+    ["content.js", "js/core.js", "js/effects.js", "js/pcb.js", "js/about.js", "js/projects.js",
+     "js/case-study.js", "js/playground.js", "js/contact.js", "js/main.js"]
+      .forEach(function (f) { document.write('<script src="' + window.SITE_BASE + f + '"><\/script>'); });
+  </script>
+</body>
+</html>

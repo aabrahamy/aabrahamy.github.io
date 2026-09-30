@@ -1,0 +1,35 @@
+<!doctype html>
+<!--
+  404.html: GitHub Pages serves this for any path it doesn't have a file for,
+  e.g. someone opening /projects/rv32i-cpu directly. If the path is one of the
+  site's pages, it bounces to index.html with the path in ?p=…, and index.html
+  puts the real path back in the address bar. Otherwise it shows a plain 404.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Not found</title>
+  <script>
+    (function () {
+      var ROUTES = ["about", "projects", "playground", "contact"];
+      var parts = location.pathname.split("/").slice(1), keep = [], rest = null;
+      for (var i = 0; i < parts.length; i++) {
+        if (ROUTES.indexOf(parts[i]) >= 0) { rest = parts.slice(i).join("/"); break; }
+        keep.push(parts[i]);
+      }
+      if (rest === null) return; // not one of our pages → show the 404 below
+      var base = "/" + keep.join("/") + (keep.length ? "/" : "");
+      location.replace(base + "?p=" + encodeURIComponent(rest + location.search) + location.hash);
+    })();
+  </script>
+  <style>
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #0a0a0a; color: #ecebe6;
+           font: 500 13px/1.6 ui-monospace, Menlo, monospace; letter-spacing: .08em; text-transform: uppercase; }
+    a { color: inherit; }
+  </style>
+</head>
+<body>
+  <p>404: page not found. <a href="/">Go home →</a></p>
+</body>
+</html>

@@ -1,0 +1,1156 @@
+/* ==========================================================================
+   styles.css
+   --------------------------------------------------------------------------
+   EDIT HERE → every color, font, size and motion value is a variable in
+   :root below. Change a value once and it updates everywhere.
+   (JS-side motion settings, trail and melt live at the top of js/core.js.)
+   ========================================================================== */
+
+:root {
+  /* ---- Background + ink ------------------------------------------------ */
+  --paper: #f5f4f0;              /* warm white */
+  --ink: #141414;                /* main text + highlighter */
+  --muted: #8a8a8a;
+  --rule: rgba(20, 20, 20, 0.85);      /* 1px table lines */
+  --bg: #0b0b0b;                 /* the black around the folder */
+  --ink-soft: #4a4a4a;
+  --rule-soft: rgba(20, 20, 20, 0.22);
+
+  /* ---- Tab + page colors (each tab paints the page its color) ---------- */
+  --tab-about: #f5f4f0;
+  --tab-projects: #d6d5d1;
+  --tab-playground: #d6d5d1;
+  --tab-contact: #f2f1ec;
+  /* tag highlights on the About page (the pastels are back; tabs + page stay gray) */
+  --tag-1: rgba(228, 227, 223, 0.7);   /* #e4e3df, light warm gray */
+  --tag-2: rgba(217, 216, 212, 0.7);   /* #d9d8d4 */
+  --tag-3: rgba(207, 206, 201, 0.7);   /* #cfcec9 */
+  --tag-4: rgba(228, 227, 223, 0.7);
+  /* "About me" note + bio sheet (js/about.js; timings are MOTION.sheet* in js/core.js) */
+  --note-w: 150px;
+  --note-h: 46px;
+  --note-tilt: -2deg;
+  --note-label-size: 13px;
+  --note-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), 0 6px 16px rgba(0, 0, 0, 0.04);
+  --sheet-width: 0.88;           /* expanded sheet width, as a fraction of the folder */
+  --sheet-alpha: 0.62;           /* paper opacity (note and sheet are the same paper) */
+  --bio-size: 17px;              /* bio text: 16px under 1200px wide and on phones */
+
+  /* ---- Paper details --------------------------------------------------- */
+  --dot: rgba(20, 20, 20, 0.38);
+  --trace: rgba(20, 20, 20, 0.11);
+  --print: #f6f5f0;
+  --tape: rgba(232, 222, 190, 0.82);
+  --placeholder: #b3b4af;
+  --annotation: #ecebe6;         /* handwriting on the black background */
+  --orange: #e2682c;             /* "The End" */
+
+  /* ---- Fonts (loaded in index.html) ------------------------------------ */
+  --font-display: "Inter Tight", "Helvetica Neue", Arial, system-ui, sans-serif;   /* variable, 400..900 */
+  --display-weight: 800;         /* weight of the name + section titles (400 to 900) */
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --font-body: "Geist", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-hand: "Reenie Beanie", "Caveat", "Comic Sans MS", cursive;
+  --font-script: "Pinyon Script", "Snell Roundhand", cursive;   /* watermark */
+
+  /* ---- Motion ---------------------------------------------------------- */
+  --dur-fade: 150ms;             /* page crossfade (also MOTION.pageFade in js/core.js) */
+  --dur-sheet: 450ms;            /* bio sheet slide */
+  --dur-hover: 450ms;            /* image zoom on hover */
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* ---- Film grain --------------------------------------------------------- */
+  --grain-opacity: 0.05;        /* over the paper folder (0.08 to 0.12 is subtle) */
+  --grain-opacity-bg: 0.00;    /* over the black background */
+  --grain-speed: 0.9s;         /* one full cycle of 8 jumps: 0.9s ≈ 9 changes/sec; higher = slower */
+  --grain-size: 400px;         /* texture tile size (js also reads this) */
+  --grain-blend: overlay;      /* overlay or soft-light */
+  --grain-url: none;           /* filled in by js/effects.js at load */
+
+  /* ---- PCB on the black background + cursor glow (js/pcb.js) ---------------- */
+  --pcb-trace: #202020;          /* resting traces + vias */
+  --pcb-comp: #2a2a2a;           /* resting component outlines, pads, labels */
+  --pcb-trace-lit: #8a8a8a;      /* a lit trace */
+  --pcb-lit: #bdbdbd;            /* a powered component (gray) */
+  --pcb-lit-tint: #f2b8cf;       /* a powered component under the pink glow */
+  --pcb-pulse: #cfcfcf;          /* the travelling signal */
+  --pcb-glow-blur: 4px;          /* glow around lit traces */
+  --pcb-glow-alpha: 0.35;
+  --pcb-scale: 1.04;             /* powered component grows this much */
+  --pcb-in: 250ms;               /* power on */
+  --pcb-out: 800ms;              /* ease back to dim */
+  --glow-color: rgba(255, 140, 190, 0.18);   /* cursor glow at its center */
+  --glow-size: 360px;
+  --glow-in: 300ms;
+  --glow-out: 400ms;
+
+  /* ---- Layout ---------------------------------------------------------- */
+  --folder-w: 830px;   /* max width of the folder page */
+  --frame: 48px;       /* black margin above/below the folder */
+  --page-ratio: 1;     /* page width ÷ height: 1 = square (was 0.925) */
+  --gutter: 16px;      /* side gutter on narrow screens */
+  /* Nav pins (right edge of the folder) */
+  --pin-room: 200px;             /* space reserved right of the folder for the pins + labels */
+  --pin-top: calc(var(--fh) * 0.08);     /* first pin's height (pins fill the top half) */
+  --pin-gap: calc(var(--fh) * 0.13);     /* equal spacing between pins */
+  --pin-trace: 40px;             /* trace length from the pad to the via */
+  --pin-pad: #bdbdbd;            /* IC-pin pad */
+  --pin-pad-edge: #8a8a8a;
+  --pin-trace-c: #4d4d4d;        /* unlit trace + via */
+  --pin-label: #6f6f6f;          /* silkscreen label */
+  --pin-hover: #9c8b93;          /* trace while hovered */
+  --pin-hover-label: #cfcfcf;
+  --pin-lit: #f2b8cf;            /* powered (active) pin; set to #fff to turn the pink accent off */
+  --pin-lit-label: #ffffff;
+  --pin-glow: 6px;               /* glow blur around the active trace */
+  --pin-glow-color: rgba(242, 184, 207, 0.65);
+  --dot-gap: 134px;    /* distance between dots (js reads this for the traces) */
+  --dot-size: 1.5px;   /* dot radius */
+  --dot-inset: 13px;   /* first row/column distance from the page edge */
+  --pad: clamp(16px, 2.6vw, 24px);
+
+  /* derived: don't edit */
+  --vh: 100vh;
+  --fh: min(calc(var(--vh) - 2 * var(--frame)), calc(var(--folder-w) / var(--page-ratio)));  /* never taller than it is wide (x ratio) */
+  --fw: min(var(--folder-w), calc(var(--fh) * var(--page-ratio)), calc(100vw - 2 * var(--gutter) - var(--pin-room)));
+  --noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+@supports (height: 100dvh) { :root { --vh: 100dvh; } }
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+*, *::before, *::after { box-sizing: border-box; }
+html { background: var(--bg); color-scheme: dark; -webkit-text-size-adjust: 100%; }
+html, body { height: 100%; overflow: hidden; }   /* the page itself never scrolls */
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 400 16px/1.45 var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+/* ---- PCB (behind the folder) + cursor glow ---------------------------------
+   z-index 0 with DOM order: grain → board → glow, all under the folder (z 1). */
+.pcb { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+.pcb * { pointer-events: none; }
+.pcb-trace, .pcb-via, .pcb-pulse { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.pcb-trace {
+  stroke: var(--pcb-trace); stroke-width: 1.4;
+  transition: stroke var(--pcb-out) ease, filter var(--pcb-out) ease;
+}
+.pcb-trace.is-lit {
+  stroke: var(--pcb-trace-lit);
+  filter: drop-shadow(0 0 var(--pcb-glow-blur) rgba(255, 255, 255, var(--pcb-glow-alpha)));
+  transition-duration: var(--pcb-in);
+}
+.pcb-via { stroke: var(--pcb-trace); stroke-width: 1.2; }
+.pcb-pulse { stroke: var(--pcb-pulse); stroke-width: 1.8; opacity: 0; }
+.pcb-comp {
+  color: var(--pcb-comp);
+  transform-box: fill-box; transform-origin: center;
+  transition: color var(--pcb-out) ease, transform var(--pcb-out) ease;
+}
+.pcb-comp .body { fill: none; stroke: currentColor; stroke-width: 1.2; }
+.pcb-comp .pad, .pcb-comp .dot { fill: currentColor; stroke: none; }
+.pcb-comp .lbl { fill: currentColor; font: 400 8px var(--font-mono); letter-spacing: 0.04em; }
+.pcb-comp.is-on { color: var(--pcb-lit-tint); transform: scale(var(--pcb-scale)); transition-duration: var(--pcb-in); }
+
+.cursor-glow {
+  position: fixed; top: 0; left: 0; z-index: 0;
+  width: var(--glow-size); height: var(--glow-size);
+  border-radius: 50%;
+  background: radial-gradient(circle closest-side, var(--glow-color), transparent);
+  mix-blend-mode: screen;
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform;
+  transition: opacity var(--glow-out) ease;
+}
+.cursor-glow.is-on { opacity: 1; transition-duration: var(--glow-in); }
+@media (hover: none), (pointer: coarse), (max-width: 767px) { .cursor-glow { display: none; } }
+
+/* hint: "psst… hover over the board" (same handwriting look as the "my projects" note) */
+.pcb-hint {
+  position: fixed; inset: 0; z-index: 0;
+  pointer-events: none;
+  color: var(--annotation);
+  opacity: 0;
+  transition: opacity 600ms ease;
+}
+.pcb-hint.is-shown { opacity: 1; }
+.pcb-hint.is-gone { opacity: 0; transition-duration: 1800ms; }   /* slow fade once the board is found */
+.pcb-hint * { pointer-events: none; }
+.pcb-hint__text {
+  position: absolute; left: 40px; bottom: 40px;
+  margin: 0;
+  font: 400 24px/0.85 var(--font-hand);
+  text-transform: uppercase;
+  white-space: nowrap;
+  transform: rotate(-6deg);
+  transform-origin: left bottom;
+  filter: url(#boil-soft);            /* scribble boil */
+}
+.pcb-hint__text span { display: block; }
+.pcb-hint__text .is-2 { padding-left: 1.6em; }
+.pcb-hint__arrow { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; filter: url(#boil-soft); }
+@media (hover: none), (pointer: coarse), (max-width: 767px) { .pcb-hint { display: none; } }
+
+/* ---- animated film grain (texture is generated in js/effects.js) --------
+   .grain--bg  : stronger grain behind the folder, so the black isn't flat
+   .grain      : soft-blended grain on top of everything (flicker)
+   The jitter hard-cuts between 8 offsets (steps), ~9 changes a second. */
+.grain {
+  position: fixed;
+  inset: -50%;
+  z-index: 9000;
+  pointer-events: none;
+  background-image: var(--grain-url);
+  background-size: var(--grain-size) var(--grain-size);
+  mix-blend-mode: var(--grain-blend);
+  opacity: var(--grain-opacity);
+  will-change: transform;
+  animation: grain-jitter var(--grain-speed) steps(1, end) infinite;
+}
+.grain--bg {
+  z-index: 0;
+  mix-blend-mode: normal;
+  opacity: var(--grain-opacity-bg);
+  animation-delay: -0.35s;   /* out of step with the top layer */
+}
+@keyframes grain-jitter {
+  0%     { transform: translate(0, 0); }
+  12.5%  { transform: translate(-7%, 4%); }
+  25%    { transform: translate(5%, -9%); }
+  37.5%  { transform: translate(-11%, -3%); }
+  50%    { transform: translate(8%, 10%); }
+  62.5%  { transform: translate(-4%, 12%); }
+  75%    { transform: translate(11%, -6%); }
+  87.5%  { transform: translate(-9%, 8%); }
+}
+html.tab-hidden .grain { animation-play-state: paused; }   /* set by js/effects.js */
+
+img { display: block; max-width: 100%; }
+a { color: inherit; }
+a, button, [role="button"], label, select { cursor: pointer; }
+button { font: inherit; color: inherit; }
+[hidden] { display: none !important; }
+.svg-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+.visually-hidden {
+  position: absolute !important; width: 1px; height: 1px; margin: -1px; padding: 0;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+.skip-link {
+  position: absolute; left: 12px; top: -60px; z-index: 50;
+  background: var(--annotation); color: var(--ink);
+  font: 500 12px/1 var(--font-mono); text-transform: uppercase; letter-spacing: .08em;
+  padding: 10px 12px; text-decoration: none;
+}
+.skip-link:focus { top: 12px; }
+
+/* selected text: black highlight, paper-colored text (inverted on the dark areas) */
+::selection { background: var(--ink); color: var(--paper); }
+::-moz-selection { background: var(--ink); color: var(--paper); }
+.annotation ::selection, .lightbox ::selection, .annotation::selection, .lightbox::selection { background: var(--annotation); color: var(--ink); }
+
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+[tabindex="-1"]:focus { outline: none; }
+.pin:focus-visible, .lightbox :focus-visible { outline-color: var(--annotation); }
+
+/* hidden scrollbars on every inner scroller */
+.scroll-y, .proj-scroll, .pg-scroll, .clipnote__body { scrollbar-width: none; }
+.scroll-y::-webkit-scrollbar, .proj-scroll::-webkit-scrollbar,
+.pg-scroll::-webkit-scrollbar, .clipnote__body::-webkit-scrollbar { display: none; }
+
+/* draggable areas */
+[data-drag] { cursor: grab; }
+[data-drag].is-dragging, [data-drag].is-dragging * { cursor: grabbing !important; user-select: none; }
+
+/* ==========================================================================
+   Shared type + the "highlighter" hover
+   ========================================================================== */
+.display {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: var(--display-weight);
+  letter-spacing: -0.045em;
+  font-size: max(28px, calc(var(--fw) * 0.085));   /* PLAYGROUND (longest title) spans ~55% of the folder */
+  line-height: 0.9;
+  text-transform: uppercase;
+  color: var(--ink);
+  width: fit-content;
+}
+
+.hl {   /* black-highlighted monospace label */
+  display: inline-block;
+  margin: 0;
+  padding: 3px 5px 2px;
+  font: 500 12px/1.25 var(--font-mono);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  background: var(--ink);
+  color: var(--label-ink, var(--paper));
+}
+
+.hand { font-family: var(--font-hand); font-weight: 400; line-height: 0.95; }
+
+.lede {
+  margin: 0;
+  font-size: clamp(17px, 2.1vw, 19px);
+  line-height: 1.32;
+  text-align: justify;
+  hyphens: auto;
+}
+.just { text-align: justify; hyphens: auto; }
+
+/* Every monospace link/button: instant black highlighter on hover. The 2px
+   side padding is offset by a negative margin so nothing shifts. */
+.mono-link, .btn-black, .ledger__cell, .toggle button {
+  display: inline-flex;
+  gap: 6px;
+  align-items: baseline;
+  margin: 0 -2px;
+  padding: 1px 2px;
+  border: 0;
+  background: none;
+  font: 500 12px/1.3 var(--font-mono);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: none;
+}
+a.mono-link { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
+.mono-link:hover, .mono-link:focus-visible,
+.ledger__cell:hover, .ledger__cell:focus-visible,
+.toggle button:hover, .toggle button[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--paper);
+  text-decoration: none;
+}
+
+/* the little "EDIT" chip wherever content.js still says [EDIT] */
+.edit-flag {
+  display: inline-block;
+  font: 600 9px/1 var(--font-mono);
+  letter-spacing: 0.08em;
+  color: inherit;
+  background: none;
+  border: 1px dashed currentColor;
+  padding: 2px 3px 1px;
+  margin-right: 2px;
+  vertical-align: 0.25em;
+  opacity: 0.6;
+}
+
+/* ==========================================================================
+   Stage + folder
+   ========================================================================== */
+.stage {
+  position: relative;
+  z-index: 1;
+  height: var(--vh);
+  display: flex;
+  justify-content: center;
+  align-items: center;      /* centered vertically when the window is taller than the folder */
+  padding: var(--frame) var(--gutter);
+  overflow: hidden;
+}
+
+.folder {
+  --page: var(--tab-about);
+  position: relative;
+  width: var(--fw);
+  height: var(--fh);
+  margin-right: var(--pin-room);
+}
+@media (min-width: 1200px) { .folder { margin-right: 0; } }
+.folder[data-section="projects"]   { --page: var(--tab-projects); }
+.folder[data-section="playground"] { --page: var(--tab-playground); }
+.folder[data-section="contact"]    { --page: var(--tab-contact); }
+
+.folder__back {
+  display: none;   /* the offset second sheet behind the page was removed */
+  position: absolute;
+  inset: 8px -5px -9px 6px;
+  background: var(--page);
+  filter: brightness(0.66) saturate(0.8);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  z-index: 0;
+}
+
+.page {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--page);   /* changes instantly with the tab */
+  color-scheme: light;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    0 2px 4px rgba(0, 0, 0, 0.35),
+    0 26px 60px -18px rgba(0, 0, 0, 0.85);
+}
+
+/* paper: dot grid + traces + grain, fixed to the folder */
+.page__paper {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle, var(--dot) var(--dot-size), transparent calc(var(--dot-size) + 0.6px));
+  background-size: var(--dot-gap) var(--dot-gap);
+  background-position: calc(var(--dot-inset) - var(--dot-gap) / 2) calc(var(--dot-inset) - var(--dot-gap) / 2);
+}
+.page__paper::before {
+  content: ""; position: absolute; inset: 0;
+  background: radial-gradient(120% 90% at 50% 35%, transparent 70%, rgba(0, 0, 0, 0.025));   /* barely-there edge shading */
+}
+.page__paper::after {
+  content: ""; position: absolute; inset: 0;
+  background-image: var(--noise);
+  mix-blend-mode: soft-light;
+  opacity: 0.5;
+}
+.page__traces { position: absolute; top: 0; left: 0; }
+.page__traces path, .page__traces circle {
+  fill: none; stroke: var(--trace); stroke-width: 1.1; stroke-linecap: round; stroke-linejoin: round;
+}
+.page__traces .pad-fill { fill: var(--trace); stroke: none; }
+
+.page__views { position: absolute; inset: 0; }
+.view { position: absolute; inset: 0; overflow: hidden; }
+.view.is-leaving { pointer-events: none; }
+.scroll-y { position: absolute; inset: 0; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; }
+
+/* ---- 4. watermark: page name pressed into the paper ------------------- */
+.wm {
+  position: absolute;
+  left: 1%;
+  bottom: -13%;            /* anchored bottom-left, bleeding off the bottom edge */
+  z-index: 0;
+  font: 400 clamp(110px, calc(var(--fw) * 0.24), 200px)/1 var(--font-script);
+  white-space: nowrap;
+  color: var(--page);
+  text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.075);   /* barely-there pressed edge, no bright highlight */
+  opacity: 0.55;
+  transform: rotate(-8deg);
+  transform-origin: left bottom;
+  pointer-events: none;
+  user-select: none;
+}
+.view > :not(.wm) { z-index: 1; }
+
+/* ---- image placeholder / frame ---------------------------------------- */
+.ph {
+  position: relative;
+  width: 100%;
+  aspect-ratio: var(--ratio, 4 / 3);
+  overflow: hidden;
+  background:
+    linear-gradient(to top right, transparent calc(50% - 0.6px), rgba(0, 0, 0, 0.14) 50%, transparent calc(50% + 0.6px)),
+    linear-gradient(to bottom right, transparent calc(50% - 0.6px), rgba(0, 0, 0, 0.14) 50%, transparent calc(50% + 0.6px)),
+    var(--placeholder);
+}
+.ph img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  opacity: 0;
+}
+.ph.is-loaded { background: none; }
+.ph.is-loaded img { opacity: 1; }
+.ph__label { position: absolute; inset: 0; display: grid; place-items: center; padding: 8px; text-align: center; }
+.ph__label span {
+  max-width: 100%;
+  color: rgba(30, 31, 28, 0.55);
+  font: 500 10px/1.35 var(--font-mono);
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.ph.is-loaded .ph__label { display: none; }
+.ph--natural.is-loaded { aspect-ratio: auto; }
+.ph--natural.is-loaded img { position: static; height: auto; }
+
+.tape {
+  position: absolute;
+  z-index: 3;
+  width: 78px; height: 22px;
+  background: var(--tape);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08);
+  clip-path: polygon(3% 0, 97% 4%, 100% 30%, 96% 55%, 100% 100%, 2% 96%, 0 70%, 4% 40%);
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   5. Nav pins: hardware-style navigation on the folder's right edge
+   ========================================================================== */
+.pins { position: absolute; top: 0; left: 100%; z-index: 3; }
+.pin {
+  position: absolute;
+  left: 0;
+  top: calc(var(--pin-top) + var(--i) * var(--pin-gap) - 18px);
+  height: 36px;                       /* generous hit area (>= 32px) */
+  display: flex;
+  align-items: center;
+  padding-right: 10px;
+  color: var(--pin-label);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.pin__svg { display: block; flex: none; overflow: visible; pointer-events: none; }
+.pin__svg--v { display: none; }
+.pin__label {
+  margin-left: 6px;
+  transform: translateY(var(--dy));   /* sits level with the via at the end of its bent trace */
+  font: 500 12px/1 var(--font-mono);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--pin-label);
+  transition: color 0.45s ease;
+}
+.pin__pad { fill: var(--pin-pad); stroke: var(--pin-pad-edge); stroke-width: 1; transition: fill 0.45s ease; }
+.pin__trace, .pin__sig { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.pin__trace { stroke: var(--pin-trace-c); stroke-width: 1.5; transition: stroke 0.45s ease; }
+.pin__via { fill: none; stroke: var(--pin-trace-c); stroke-width: 1.2; transition: stroke 0.45s ease; }
+.pin__dot { fill: var(--pin-lit); opacity: 0; }
+.pin__sig { stroke: var(--pin-lit); stroke-width: 2.2; stroke-dasharray: 26 200; stroke-dashoffset: 26; opacity: 0; }
+
+/* hover (inactive pin): the trace lights up with a quick signal from pad to label */
+.pin:not([aria-current]):hover .pin__trace, .pin:not([aria-current]):focus-visible .pin__trace,
+.pin:not([aria-current]):hover .pin__via, .pin:not([aria-current]):focus-visible .pin__via { stroke: var(--pin-hover); }
+.pin:not([aria-current]):hover .pin__label, .pin:not([aria-current]):focus-visible .pin__label { color: var(--pin-hover-label); }
+.pin:not([aria-current]):hover .pin__sig, .pin:not([aria-current]):focus-visible .pin__sig { animation: pin-travel 400ms ease-out forwards; }
+@keyframes pin-travel { from { opacity: 1; stroke-dashoffset: 26; } to { opacity: 1; stroke-dashoffset: -100; } }
+
+/* click: the pulse runs back INTO the folder before the page changes */
+.pin.is-firing .pin__sig { animation: pin-fire 110ms linear forwards; }
+@keyframes pin-fire { from { opacity: 1; stroke-dashoffset: -100; } to { opacity: 1; stroke-dashoffset: 26; } }
+
+/* active page: the pin is powered */
+.pin[aria-current="page"] .pin__pad { fill: var(--pin-lit); }
+.pin[aria-current="page"] .pin__trace { stroke: var(--pin-lit); filter: drop-shadow(0 0 var(--pin-glow) var(--pin-glow-color)); }
+.pin[aria-current="page"] .pin__via { stroke: var(--pin-lit); }
+.pin[aria-current="page"] .pin__label { color: var(--pin-lit-label); }
+.pin[aria-current="page"] .pin__dot { animation: pin-pulse 2s ease-in-out infinite; }
+@keyframes pin-pulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+.pin:focus-visible { outline: 2px solid var(--pin-lit); outline-offset: 1px; }
+
+/* handwritten "my projects" note beside the PROJECTS pin (About only, wide screens) */
+.annotation {
+  position: absolute;
+  top: 0; left: 0;                  /* set by js/main.js, next to the 02 PROJECTS label */
+  margin: 0;
+  display: flex;
+  visibility: hidden;
+  align-items: flex-start;
+  gap: 4px;
+  color: var(--annotation);
+  font: 400 30px/0.85 var(--font-hand);
+  text-transform: uppercase;
+  transform: rotate(-4deg);
+  pointer-events: none;
+}
+.annotation__arrow { width: 54px; flex: none; margin-top: 6px; }
+.annotation__text { max-width: 5.5em; }
+.folder[data-view="about"] .annotation.is-fit { visibility: visible; }
+@media (max-width: 767px) { .annotation { display: none; } }
+
+/* ==========================================================================
+   6. ABOUT
+   ========================================================================== */
+/* ---- the paper-clipped "ABOUT ME" note. It is also the bio sheet: one piece of paper
+   that grows from the note (top-left pinned under the clip) into the sheet. */
+.clipnote {
+  position: absolute;
+  left: 14px;
+  top: 12px;
+  z-index: 5 !important;             /* above the page and the scrim, under the footer clock */
+  width: var(--note-w);
+  height: var(--note-h);
+  transform-origin: 16px 6px;        /* at the paperclip */
+  transform: rotate(var(--note-tilt));
+  transition: translate 200ms ease;
+}
+.clipnote:not(.is-open):hover { translate: 0 -1px; }
+.clipnote.is-open { width: var(--sheet-w); height: var(--sheet-h); transform: none; }
+.clipnote__paper {
+  position: absolute; inset: 0;
+  overflow: hidden;
+  background: rgba(250, 249, 245, var(--sheet-alpha));
+  -webkit-backdrop-filter: blur(3px);
+          backdrop-filter: blur(3px);
+  box-shadow: var(--note-shadow);
+}
+.clipnote__paper::before {           /* the same paper grain as the page */
+  content: ""; position: absolute; inset: 0;
+  background-image: var(--noise);
+  mix-blend-mode: soft-light; opacity: 0.55;
+  pointer-events: none;
+}
+.clipnote__hit {
+  position: absolute; left: 0; top: 0; z-index: 2;
+  width: var(--note-w); height: var(--note-h);
+  margin: 0; padding: 0; border: 0; background: none;
+  text-align: left;
+}
+.clipnote__label {
+  position: absolute; left: 40px; top: 50%;
+  translate: 0 -50%;
+  font: 500 var(--note-label-size)/1 var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);                 /* plain text, no highlight */
+}
+.clipnote__clip { position: absolute; left: 9px; top: -10px; width: 14px; height: 40px; z-index: 3; pointer-events: none; }
+.clipnote__body {
+  position: absolute; left: 0; top: 0;
+  width: var(--sheet-w, 0); height: var(--sheet-h, 0);
+  overflow-y: auto;
+  padding: 78px 36px 36px;           /* the sheet ends above the footer clock; taller content scrolls inside */
+  opacity: 0;
+  --label-ink: #fafaf6;
+}
+.clipnote.is-open .clipnote__body { opacity: 1; }
+
+.about {
+  transition: opacity var(--dur-sheet) ease, filter var(--dur-sheet) ease;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-rows: auto auto auto 1fr;
+  align-content: start;
+  min-height: 100%;
+  padding: 64px var(--pad) 58px;
+}
+.about-name {
+  grid-column: 1 / -1;
+  justify-self: center;
+  white-space: nowrap;
+  /* sized to the folder so the name stays on one line */
+  font-size: min(74px, calc((var(--fw) - 2 * var(--pad)) / 9.4));
+}
+.about-intro { grid-column: 3 / 6; margin-top: 24px; }
+/* About intro: small, left-aligned, scales with the folder (like the reference).
+   Change 0.021 for bigger/smaller; 13px / 18px are the min / max. */
+.about-intro .lede {
+  font-size: clamp(13px, calc(var(--fw) * 0.021), 18px);
+  line-height: 1.32;
+  text-align: left;
+  hyphens: manual;
+}
+.about-intro .mono-link { margin-top: 18px; }
+
+/* 6a. stamp with perforated edges (CSS mask) */
+.stamp-fig {
+  grid-column: 3 / 5;
+  position: relative;
+  margin: 22px 0 0;
+  /* stamp size: raise 0.38 / 380px to make the photo canvas bigger */
+  width: min(380px, calc(var(--fh) * 0.38));
+}
+.stamp-shadow { filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.15)); }  /* on the wrapper: masks clip box-shadow */
+.stamp {
+  /* perforation: half-circle notches bitten into all four edges, cut out of
+     the photo itself (no white border). Tune with these two variables: */
+  --notch-r: 8px;      /* notch radius */
+  --notch-gap: 20px;    /* notch spacing (adjusted per stamp so they fit evenly) */
+  --keep: calc(var(--notch-r) + 1px);   /* solid center inset: don't change */
+
+  /* Four corner circles per tile (intersected) punch a full notch at every
+     tile corner; a solid center is added back so only the edges are cut. */
+  -webkit-mask-image:
+    linear-gradient(#000 0 0),
+    radial-gradient(circle var(--notch-r) at 0 0, #0000 calc(var(--notch-r) - 0.5px), #000 var(--notch-r)),
+    radial-gradient(circle var(--notch-r) at 100% 0, #0000 calc(var(--notch-r) - 0.5px), #000 var(--notch-r)),
+    radial-gradient(circle var(--notch-r) at 0 100%, #0000 calc(var(--notch-r) - 0.5px), #000 var(--notch-r)),
+    radial-gradient(circle var(--notch-r) at 100% 100%, #0000 calc(var(--notch-r) - 0.5px), #000 var(--notch-r));
+          mask-image:
+    linear-gradient(#000 0 0),
+    radial-gradient(circle var(--notch-r) at 0 0, #0000 calc(var(--notch-r) - 0.5px), #000 var(--notch-r)),
+    radial-gradient(circle var(--notch-r) at 100% 0, #0000 calc(var(--notch-r) - 0.5px), #000 var(--notch-r)),
+    radial-gradient(circle var(--notch-r) at 0 100%, #0000 calc(var(--notch-r) - 0.5px), #000 var(--notch-r)),
+    radial-gradient(circle var(--notch-r) at 100% 100%, #0000 calc(var(--notch-r) - 0.5px), #000 var(--notch-r));
+  -webkit-mask-size:
+    calc(100% - 2 * var(--keep)) calc(100% - 2 * var(--keep)),
+    var(--notch-gap) var(--notch-gap), var(--notch-gap) var(--notch-gap),
+    var(--notch-gap) var(--notch-gap), var(--notch-gap) var(--notch-gap);
+          mask-size:
+    calc(100% - 2 * var(--keep)) calc(100% - 2 * var(--keep)),
+    var(--notch-gap) var(--notch-gap), var(--notch-gap) var(--notch-gap),
+    var(--notch-gap) var(--notch-gap), var(--notch-gap) var(--notch-gap);
+  -webkit-mask-position: center, 0 0, 0 0, 0 0, 0 0;
+          mask-position: center, 0 0, 0 0, 0 0, 0 0;
+  /* "round" resizes the tiles a little so whole notches fit the stamp evenly */
+  -webkit-mask-repeat: no-repeat, round, round, round, round;
+          mask-repeat: no-repeat, round, round, round, round;
+  -webkit-mask-composite: source-over, source-in, source-in, source-in, source-in;
+          mask-composite: add, intersect, intersect, intersect, intersect;
+}
+/* stamp photos are stacked; only the active one shows (hard cut). The frame keeps the
+   placeholder gray behind them so nothing flashes empty. */
+.stamp .ph, .stamp .ph.is-loaded { background: var(--placeholder); }
+.stamp .ph img.stamp-img { opacity: 0; }
+.stamp .ph.is-loaded img.stamp-img { opacity: 0; }
+.stamp .ph.is-loaded img.stamp-img.is-active { opacity: 1; }
+/* The stamp photos are shown in full color. For black and white, use: .stamp .ph img { filter: grayscale(1) contrast(1.05); } */
+.stamp-cap {   /* overlaps the stamp's bottom-right corner */
+  position: absolute;
+  left: calc(100% - 90px);   /* starts at the stamp's bottom-right corner */
+  bottom: -40px;
+  width: 190px;
+  font-size: 20px;
+  text-transform: uppercase;
+  transform: rotate(-18deg);
+  transform-origin: left bottom;
+  pointer-events: none;
+  filter: url(#boil);   /* hand-drawn line boil (see js/effects.js) */
+}
+
+/* 6c. numbered tag staircase */
+.ftags {
+  grid-column: 1 / -1;
+  align-self: end;
+  list-style: none;
+  margin: 24px 0 0;
+  padding: 0;
+}
+.ftag {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  align-items: center;
+  margin-bottom: 11px;
+  font: 500 12px/1 var(--font-mono);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+.ftag__num { grid-row: 1; }
+.ftag__label { grid-row: 1; justify-self: start; white-space: nowrap; padding: 4px 6px 3px; background: var(--hl); }
+.ftag__year { grid-column: 6; grid-row: 1; justify-self: end; }
+
+.strip-foot {
+  position: absolute;
+  left: var(--pad);
+  right: var(--pad);
+  bottom: 0;
+  z-index: 7 !important;           /* stays visible above the bio sheet */
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  padding: 10px 0 14px;
+  font: 500 12px/1.2 var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+.strip-foot time { font-variant-numeric: tabular-nums; }
+
+/* 6b. bio sheet: click-away scrim + the faded page behind it */
+.view.is-sheet-open .about { opacity: 0.4; filter: blur(2.5px); }
+.bio-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 4 !important;
+  display: none;
+  cursor: pointer;
+}
+.view.is-sheet-open .bio-scrim { display: block; }
+.bio-sheet__intro {
+  margin: 0;
+  max-width: 90%;
+  font-size: var(--bio-size);
+  line-height: 1.5;
+}
+/* under the bio (48px gap): the HIGHLIGHTS list */
+.bio-sheet__lists {
+  display: grid;
+  margin-top: 30px;
+}
+.bio-sheet__lists .hl { margin-bottom: 16px; }
+.plain-list {
+  list-style: none;
+  margin: 0; padding: 0;
+  font: 400 13px/1.7 var(--font-mono);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.plain-list .mono-link { font-size: 13px; text-decoration: none; }
+.bio-sheet__lists .plain-list, .bio-sheet__lists .plain-list .mono-link { font-size: 13px; letter-spacing: 0.08em; }
+.bio-sheet__lists .plain-list .mono-link { display: inline; margin: 0; }   /* long links wrap as normal text, arrow stays with the last word */
+.sheet-close { display: none; position: absolute; top: 20px; right: 20px; }
+.clipnote__body .sheet-close:hover { color: #fafaf6; }
+@media (max-width: 1199px) { :root { --bio-size: 16px; } }
+
+/* ==========================================================================
+   7. PROJECTS
+   ========================================================================== */
+.view--projects { display: flex; flex-direction: column; }
+.proj-head {
+  position: relative;
+  flex: none;
+  display: grid;
+  padding: var(--pad) var(--pad) 12px;
+}
+.toggle { justify-self: center; display: flex; gap: 14px; margin-top: 14px; }
+.toggle button { padding: 2px 4px; margin: 0; }
+
+.proj-scroll {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 22px);
+          mask-image: linear-gradient(to bottom, transparent 0, #000 22px);
+}
+.proj-track { position: relative; }
+.proj-track--grid .copy { display: contents; }
+
+/* grid cards (positions set by js/projects.js) */
+.card {
+  position: absolute;
+  display: block;
+  text-decoration: none;
+}
+.card__num, .prow__num { font: 500 12px/1 var(--font-mono); letter-spacing: 0.06em; }
+.card__num { display: block; height: 22px; }
+.card__img { display: block; overflow: hidden; }
+.card__img .ph { transition: transform var(--dur-hover) var(--ease-out); }
+.card:hover .card__img .ph, .card:focus-visible .card__img .ph { transform: scale(1.03); }
+.card__name { margin-top: 10px; }
+.card__cat {
+  display: block;
+  margin-top: 6px;
+  font: 500 12px/1 var(--font-mono);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+/* dense list */
+.plist { list-style: none; margin: 0; padding: 0 var(--pad); }
+.prow {
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  height: 27px;
+  padding: 0 6px;
+  border-bottom: 1px solid var(--rule-soft);
+  font: 500 11px/1 var(--font-mono);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.prow__name { overflow: hidden; text-overflow: ellipsis; font-weight: 700; }
+.prow__cat { text-align: right; }
+.prow__thumb { display: none; }
+.prow:hover, .prow:focus-visible { background: var(--ink); color: var(--paper); }
+.list-preview {
+  position: absolute;
+  top: 0; left: 0;
+  z-index: 8 !important;
+  width: 140px;
+  pointer-events: none;
+  opacity: 0;
+  box-shadow: 0 10px 22px -10px rgba(0, 0, 0, 0.5);
+}
+.list-preview.is-on { opacity: 1; }
+
+/* ==========================================================================
+   8. CASE STUDY (/projects/<slug>)
+   ========================================================================== */
+.case { padding: 20px var(--pad) 72px; }
+.case-top { display: flex; justify-content: flex-end; align-items: baseline; gap: 18px; }
+.case-pos { font: 500 12px/1 var(--font-mono); letter-spacing: 0.06em; }
+.case-title {
+  margin: 36px 0 0;
+  max-width: 13ch;
+  font: 500 clamp(40px, 7.4vw, 78px)/0.95 var(--font-body);
+  letter-spacing: -0.05em;
+}
+.case-kicker {
+  margin: 14px 0 0;
+  font: 500 12px/1 var(--font-mono);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+.case-row {
+  display: grid;
+  grid-template-columns: 45% 55%;
+  align-items: start;
+}
+.case-intro { margin-top: 52px; }
+.case-body { font-size: 16px; line-height: 1.55; }
+.case-body p { margin: 0 0 12px; }
+.case-intro .case-body > p { font-size: 17px; }
+.case-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 22px;
+  margin: 26px 0 0;
+}
+.case-meta dt {
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--rule);
+  font: 500 10px/1 var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.case-meta dd { margin: 8px 0 0; font-size: 14px; line-height: 1.35; }
+
+.cb { margin: 48px 0 0; }
+.cb-image { margin-left: calc(-1 * var(--pad)); margin-right: calc(-1 * var(--pad)); }
+.cb-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-items: start; }
+.cb-pair figure { margin: 0; }
+.cb-code { border: 1px solid var(--ink); background: rgba(255, 255, 255, 0.35); }
+.cb-code__lang {
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--ink);
+  font: 500 10px/1 var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.cb-code pre { margin: 0; padding: 14px 16px 16px; overflow-x: auto; font: 400 12.5px/1.65 var(--font-mono); tab-size: 2; }
+.cb-diagram { padding: 18px; background: #fff; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12), 0 12px 24px -16px rgba(0, 0, 0, 0.4); }
+.cb-diagram figcaption {
+  margin-top: 12px;
+  font: 500 11px/1.4 var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.cb-video { margin-left: 0; margin-right: 0; }
+.cb-video__frame { width: 100%; background: #111; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12), 0 12px 24px -16px rgba(0, 0, 0, 0.4); }
+.cb-video iframe, .cb-video video { display: block; width: 100%; height: 100%; border: 0; }
+.cb-video__fallback { display: grid; place-items: center; width: 100%; height: 100%; color: #fff; }
+.cb-video figcaption { margin-top: 12px; font: 500 11px/1.4 var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; }
+.cb-links { display: flex; flex-wrap: wrap; gap: 12px 26px; }
+
+.case-next {
+  display: grid;
+  grid-template-columns: 38% 1fr;
+  grid-template-rows: auto 1fr;
+  gap: 14px 20px;
+  margin-top: 84px;
+  padding-top: 16px;
+  border-top: 1px solid var(--rule);
+  text-decoration: none;
+}
+.case-next__label { grid-column: 1 / -1; justify-self: end; text-decoration: none; }
+.case-next:hover .case-next__label { background: var(--ink); color: var(--paper); }
+.case-next__img { display: block; overflow: hidden; }
+.case-next__img .ph { transition: transform var(--dur-hover) var(--ease-out); }
+.case-next:hover .case-next__img .ph { transform: scale(1.03); }
+.case-next__name { align-self: end; font: 500 clamp(26px, 4vw, 40px)/1 var(--font-body); letter-spacing: -0.04em; }
+
+.case-progress {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 3px;
+  z-index: 5 !important;
+  background: rgba(0, 0, 0, 0.08);
+  pointer-events: none;
+}
+.case-progress span { display: block; height: 100%; background: var(--ink); transform-origin: left; transform: scaleX(0); }
+
+/* ==========================================================================
+   9. PLAYGROUND
+   ========================================================================== */
+.pg-title { position: absolute; top: 24px; left: 24px; z-index: 4 !important; }
+.pg-scroll {
+  position: absolute;
+  inset: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior: contain;
+  outline-offset: -4px;
+}
+.pg-canvas { position: relative; height: 100%; overflow: hidden; }
+.pg-layer { position: absolute; inset: 0; will-change: transform; }
+.pg-layer--float { pointer-events: none; }
+.pg-layer--float .pg-item { pointer-events: auto; }
+.pg-copy { position: absolute; top: 0; bottom: 0; width: 0; }
+.pg-item { position: absolute; margin: 0; transform: rotate(var(--rot, 0deg)); }
+
+.pg-num {
+  position: absolute;
+  top: 0;
+  right: 100%;            /* left of the photo's top-left corner */
+  padding-right: 8px;
+  font: 500 11px/1 var(--font-mono);
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+.pg-photo .ph, .pg-art .ph { box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15); }
+.pg-art .tape { top: -11px; left: 50%; transform: translateX(-50%) rotate(-3deg); }
+.pg-hit { position: absolute; inset: 0; z-index: 2; background: none; border: 0; padding: 0; cursor: zoom-in; }
+[data-drag].is-dragging .pg-hit { cursor: grabbing; }
+
+.pg-note { font-size: clamp(26px, 3.6vw, 34px); text-transform: uppercase; white-space: nowrap; }
+.pg-note__l2 { display: block; padding-left: 1.3em; }
+.pg-intro, .pg-swipe { white-space: nowrap; }
+.pg-intro {
+  margin: 0;
+  font-size: 32px;
+  line-height: 1.02;
+  text-transform: uppercase;
+  transform: rotate(-1deg);
+  filter: url(#boil-soft);          /* subtle scribble boil */
+}
+.pg-intro__l { display: block; }
+.pg-intro__l.is-indent { padding-left: 3.6em; }   /* "WORLD" sits under "MY" */
+.pg-swipe { display: flex; flex-direction: column; margin: 0; font-size: 22px; line-height: 1; text-transform: uppercase; }
+.pg-swipe svg { width: 44px; margin-top: 2px; }
+.pg-sticker { filter: drop-shadow(0 4px 5px rgba(0, 0, 0, 0.3)); }
+.pg-sticker .ph:not(.is-loaded) { border-radius: 50%; }
+.pg-end { color: var(--orange); white-space: nowrap; }
+.pg-end .hand { font-size: clamp(56px, 8vw, 84px); text-transform: none; }
+.sparkle { position: absolute; }
+
+/* lightbox */
+.lightbox {
+  max-width: none; max-height: none;
+  width: 100%; height: 100%;
+  margin: 0;
+  padding: 56px 64px 24px;
+  border: 0;
+  background: rgba(10, 10, 10, 0.92);
+  color: var(--annotation);
+  --page: var(--annotation);
+}
+.lightbox[open] { display: grid; grid-template-columns: auto 1fr auto; align-items: center; justify-items: center; gap: 16px; }
+.lightbox::backdrop { background: transparent; }
+.lightbox .mono-link:hover { color: var(--bg); background: var(--annotation); }
+.lightbox__close { position: fixed; top: 16px; right: 18px; }
+.lightbox__nav {
+  width: 40px; height: 40px;
+  background: none;
+  border: 1px solid currentColor;
+  font: 500 16px/1 var(--font-mono);
+}
+.lightbox__nav:hover { background: var(--annotation); color: var(--bg); }
+.lightbox__figure { margin: 0; display: grid; justify-items: center; gap: 12px; }
+.lightbox__img .ph { width: auto; height: min(72vh, 640px); max-width: 70vw; }
+.lightbox__img .ph.is-loaded { height: auto; max-width: none; }
+.lightbox__img .ph.is-loaded img { max-width: min(78vw, 1200px); max-height: 76vh; width: auto; }
+.lightbox__cap {
+  max-width: 80ch;
+  text-align: center;
+  font: 500 11px/1.4 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ==========================================================================
+   10. CONTACT
+   ========================================================================== */
+/* Contact: intro + links table share one left edge, on a via-grid column (2nd column of the dot grid) */
+.contact { --contact-x: calc(var(--dot-inset) + var(--dot-gap)); padding: var(--pad) var(--pad) 45vh; }
+.contact-lede {
+  margin: 56px 0 0 calc(var(--contact-x) - var(--pad));
+  max-width: 60%;
+  font-size: 28px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  text-align: left;
+}
+.ledger { margin: 40px 0 0 calc(var(--contact-x) - var(--pad)); border-top: 1px solid var(--rule); }
+.ledger__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 15px 8px;
+  border-bottom: 1px solid var(--rule);
+  font: 500 12px/1.2 var(--font-mono);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--ink);
+}
+.ledger__mail { display: flex; align-items: center; gap: 22px; color: inherit; text-decoration: none; min-width: 0; }
+.ledger__addr { overflow-wrap: anywhere; }
+a.ledger__row:hover, a.ledger__row:focus-visible,
+.ledger__row--email:hover, .ledger__row--email:focus-within { background: var(--ink); color: var(--paper); }
+.copy-btn { display: inline-flex; gap: 6px; align-items: baseline; padding: 0; background: none; border: 0; font: inherit; letter-spacing: inherit; text-transform: inherit; color: inherit; white-space: nowrap; }
+
+/* ==========================================================================
+   1. Ink trail canvas
+   ========================================================================== */
+.ink-trail { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 9999; pointer-events: none; }
+@media (hover: none), (pointer: coarse), (max-width: 767px) { .ink-trail { display: none; } }
+
+/* ==========================================================================
+   11. Mobile (< 768px)
+   ========================================================================== */
+@media (max-width: 767px) {
+  :root {
+    --frame: 12px;
+    --gutter: 12px;
+    --fh: calc(var(--vh) - 70px - var(--frame));   /* room for the tab row */
+    --fw: calc(100vw - 2 * var(--gutter));
+  }
+  .stage { padding: 70px var(--gutter) 0; align-items: flex-start; }
+  .folder { margin-right: 0; }
+
+  /* pins along the top edge, with short vertical traces down to the folder */
+  .pins { top: auto; bottom: 100%; left: 0; right: 0; display: flex; justify-content: space-around; }
+  .pin { position: static; height: auto; min-height: 44px; flex-direction: column; justify-content: flex-end; align-items: center; padding: 0 2px; }
+  .pin__svg--h { display: none; }
+  .pin__svg--v { display: block; }
+  .pin__label { order: -1; margin: 0 0 2px; transform: none; font-size: 9.5px; letter-spacing: 0.06em; }
+
+  .about { display: block; padding-top: 76px; padding-bottom: 76px; }
+  .about-name { margin-top: 8px; white-space: normal; font-size: clamp(36px, 11vw, 56px); }
+  .about-intro { margin-top: 20px; }
+  .stamp-fig { margin: 36px 0 0 2%; width: 50%; }
+  .stamp { --notch-r: 9px; --notch-gap: 30px; }
+  .stamp-cap { left: calc(100% - 22px); bottom: -12px; width: 150px; font-size: 18px; }
+  .ftags { margin-top: 56px; }
+  .ftag { display: flex; gap: 12px; margin-bottom: 12px; }
+  .ftag__year { margin-left: auto; }
+  .strip-foot { font-size: 10.5px; background: var(--page); }
+
+  .clipnote__body { padding: 70px 20px 70px; }
+  .sheet-close { display: inline-flex; }
+  .bio-sheet__intro { max-width: none; }
+  .bio-sheet__lists { grid-template-columns: 1fr; row-gap: 32px; margin-top: 36px; }
+
+  .prow { grid-template-columns: 38px 40px 1fr; height: 45px; }
+  .prow__thumb { display: block; width: 38px; }
+  .prow__cat { display: none; }
+
+  .case-row { grid-template-columns: 1fr; gap: 12px; }
+  .case-next { grid-template-columns: 45% 1fr; }
+
+  .contact { --contact-x: var(--pad); }
+  .contact-lede { max-width: none; margin-top: 40px; font-size: 22px; }
+  .ledger__socials { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ledger__socials .ledger__k { grid-column: 1 / -1; padding-bottom: 6px; }
+  .ledger__socials .ledger__cell { border-left: 0; border-top: 1px solid var(--rule-soft); padding-left: 0; }
+  .ledger__email { grid-template-columns: 1fr auto; }
+  .ledger__email .ledger__k { grid-column: 1 / -1; padding-bottom: 0; }
+  .field { grid-template-columns: 30% 1fr; }
+
+  .lightbox { padding: 56px 8px 24px; }
+  .lightbox[open] { grid-template-columns: 1fr; }
+  .lightbox__nav { position: fixed; bottom: 18px; }
+  .lightbox__nav--prev { left: 18px; }
+  .lightbox__nav--next { right: 18px; }
+}
+
+/* ==========================================================================
+   Reduced motion: no trail/melt/cycling/momentum (handled in JS), and
+   slides become simple fades.
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .grain { animation: none; }   /* keep the texture, stop the flicker */
+  .pcb-comp.is-on { transform: none; }
+  .pin__sig { display: none; }
+  .pin[aria-current="page"] .pin__dot { animation: none; opacity: 1; }
+  .pin__label, .pin__pad, .pin__trace, .pin__via { transition: none; }
+  .pcb-comp, .pcb-trace { transition-duration: var(--dur-fade); }
+  .card__img .ph, .case-next__img .ph { transition: none; }
+}
