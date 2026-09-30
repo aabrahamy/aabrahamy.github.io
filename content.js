@@ -19,10 +19,10 @@ const SITE = {
 
   /* ---- Links used around the site ------------------------------------- */
   links: {
-    email: "abrahamy@purdue.edu",                                // [EDIT]
-    linkedin: "https://www.linkedin.com/in/aabrahamy",     // [EDIT]
-    github: "https://github.com/aabrahamy",                // [EDIT]                  // [EDIT] your photo portfolio
-    resume: "assets/about/resume.pdf",                       // drop your PDF here
+    email: "abrahamy@purdue.edu",                            
+    linkedin: "https://www.linkedin.com/in/aabrahamy",     
+    github: "https://github.com/aabrahamy",                              
+    resume: "assets/about/resume.pdf",                      
   },
 
   /* ======================================================================
