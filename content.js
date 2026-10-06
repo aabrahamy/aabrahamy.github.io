@@ -246,12 +246,12 @@ endmodule`
       // FIRST SCREEN: only photo (01) is visible on load (bottom-right, 27% wide, right edge
       // slightly cut off). `bottom: 0.02` pins it 2% above the folder's bottom instead of using y.
       // Everything else starts past x = 820 (the folder's width in design units) and appears as you swipe.
-      { type: "photo", src: "assets/playground/bell-tower.jpg", alt: "[EDIT]", ratio: "2/3", caption: "[EDIT] Fujifilm X-T30 III · West Lafayette", date: "2026.04", x: 607, bottom: 0.02, w: 221 },
-      /*{ type: "sticker", src: "assets/playground/sticker-camera.png", alt: "My camera", ratio: "1/1", x: 960, y: 0.6, w: 130, rotate: -10 },
+      { type: "photo", src: "assets/playground/bell-tower.jpg", alt: "Purdue Bell Tower", ratio: "2/3", caption: "Fujifilm X-T30 III · West Lafayette, Indiana", date: "2026.05", x: 607, bottom: 0.02, w: 221 },
+      { type: "photo", src: "assets/playground/train.jpg", alt: "Chicago Red Line", ratio: "4/5", caption: "Fujifilm X-T30 III · Chinatown, Chicago", date: "2026.03", x: 960, y: 0.6, w: 130, rotate: -10 },
       { type: "note", text: "shooting on\nmy Fuji", x: 1050, y: 0.8, rotate: -3 },
-      { type: "photo", src: "assets/playground/photo-02.jpg", alt: "[EDIT]", ratio: "3/2", caption: "[EDIT] Fujifilm X-T30 III · Chicago", date: "2026.05", x: 1200, y: 0.3, w: 270 },
-      { type: "art", src: "assets/playground/art-01.jpg", alt: "[EDIT]", ratio: "4/5", caption: "[EDIT] Charcoal study", date: "2025", tape: true, x: 1530, y: 0.44, w: 220, rotate: 2 },
-      { type: "note", text: "painting\nagain", x: 1550, y: 0.18, rotate: 4 },
+      { type: "photo", src: "assets/playground/baker_beach.jpg", alt: "Baker Beach", ratio: "3/2", caption: "Fujifilm X-T30 III · San Francisco, California", date: "2026.08", x: 1200, y: 0.3, w: 351 },
+      { type: "art", src: "assets/playground/venice.jpg", alt: "Venice Boat", ratio: "4/5", caption: "Canon PowerShot SX200 IS · Venice, Italy", date: "2025.06", tape: true, x: 1530, y: 0.44, w: 220, rotate: 2 },
+      /*{ type: "note", text: "painting\nagain", x: 1550, y: 0.18, rotate: 4 },
       { type: "photo", src: "assets/playground/photo-03.jpg", alt: "[EDIT]", ratio: "4/5", caption: "[EDIT] Fujifilm X-T30 III", date: "2026.06", x: 1830, y: 0.14, w: 180 },
       { type: "photo", src: "assets/playground/photo-04.jpg", alt: "[EDIT]", ratio: "3/2", caption: "[EDIT] Fujifilm X-T30 III", date: "2026.06", x: 1890, y: 0.6, w: 240 },
       { type: "note", text: "learning guitar", x: 2200, y: 0.3, rotate: -5 },
