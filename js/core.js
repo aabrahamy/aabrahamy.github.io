@@ -370,7 +370,7 @@ window.App = (() => {
     const folder = $("#folder");
     folder.dataset.section = route.tab;
     folder.dataset.view = name;
-    document.title = route.tab === "about" && !route.slug ? `${SITE.name}: ${out.title}` : `${out.title} · ${SITE.name}`;
+    document.title = `ani/${route.tab}${route.slug ? `/${route.slug}` : ""}`;
 
     const el = document.createElement("div");
     el.className = `view view--${name}`;
