@@ -990,6 +990,7 @@ a.mono-link { text-decoration: underline; text-underline-offset: 4px; text-decor
 
 .pg-note { font-size: clamp(26px, 3.6vw, 34px); text-transform: uppercase; white-space: nowrap; }
 .pg-note__l2 { display: block; padding-left: 1.3em; }
+.pg-flag { display: inline-block; width: 1.2em; height: 0.6em; vertical-align: 0.00em; margin-left: 0.1em; border-radius: 2px; }
 .pg-intro, .pg-swipe { white-space: nowrap; }
 .pg-intro {
   margin: 0;
