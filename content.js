@@ -31,7 +31,7 @@ const SITE = {
   about: {
     noteLabel: "About me",            // the paper-clipped note (opens the bio sheet)
     intro:
-      "Hi! I'm Ani, a Computer Engineering sophomore at Purdue, passionate about hardware design, verification, and anything computers.",
+      "Hi! I'm Ani, a Purdue Computer Engineering sophomore building at the hardware–software boundary.",
     ctaLabel: "Contact Me",           // opens Contact
     tabNote: "my projects",           // handwritten note beside the PROJECTS tab
 
@@ -55,16 +55,17 @@ const SITE = {
     stampCaption: "made with love, Ani",
 
     // ---- Numbered tag staircase + footer ---------------------------------
-    tags: ["Digital Design", "Computer Architecture", "Semiconductors"],
+    tags: ["Digital Design", "Computer Architecture", "Systems Software"],
     location: "West Lafayette",
     timezone: "America/Indiana/Indianapolis",
 
     // ---- Slide-over bio sheet (click the "ABOUT ME" note) ----------------
     sheet: {
       intro:
-        "I got into computers through games, first writing Lua scripts for Roblox as a kid, then picking out parts and building my own PC in high school. That turned into learning C in college, and C turned into wanting to know what actually happens on a lower level: how hardware turns code into computation, from a single instruction moving through a CPU pipeline to thousands of threads running in parallel on a GPU. Now I'm a Computer Engineering student at Purdue working on digital design and verification. I'm building an RV32I CPU in SystemVerilog, doing RTL work with SoCET, and spent a co-op at Cummins building AI data pipelines. I'm still figuring out my niche in hardware design, and I'm doing it by building projects, getting into research, and following what I'm most curious about.",
+        "I got into computers through games, first writing Lua scripts for Roblox as a kid, then picking out parts and building my own PC in high school. That turned into learning C in college, and C made me want to understand the whole stack: how code turns into computation, from a single instruction moving through a CPU pipeline to thousands of threads running in parallel on a GPU. Now I'm a Computer Engineering student at Purdue working on both sides of that line. On the hardware side, I'm building digital hardware in SystemVerilog and doing RTL work with SoCET. On the software side, I'm a co-op at Cummins building AI data pipelines and a previous SWE intern at Canary Labs. I'm still finding my niche, and I'm doing it by building projects, getting into research, and following what I'm most curious about.",
       // `href` is optional. With it, the line becomes a link with a → arrow.
       highlights: [
+        { label: "My Substack Blog", href: "https://substack.com/@aabrahamy" },
         { label: "Armenian Student Association", href: "https://all-asa.org/" },
         { label: "Delta Phi Lambda Sorority", href: "https://www.deltaphilambda.org/" },
         { label: "System-on-Chip Extension Technologies", href: "https://engineering.purdue.edu/SoC-Team" },
@@ -251,21 +252,25 @@ endmodule`
       { type: "note", text: "shooting on\nmy Fuji", x: 1050, y: 0.8, rotate: -3 },
       { type: "photo", src: "assets/playground/baker_beach.jpg", alt: "Baker Beach", ratio: "3/2", caption: "Fujifilm X-T30 III · San Francisco, California", date: "2026.08", x: 1200, y: 0.3, w: 351 },
       { type: "art", src: "assets/playground/venice.jpg", alt: "Venice Boat", ratio: "4/5", caption: "Canon PowerShot SX200 IS · Venice, Italy", date: "2025.06", tape: true, x: 1530, y: 0.44, w: 220, rotate: 2 },
-      /*{ type: "note", text: "painting\nagain", x: 1550, y: 0.18, rotate: 4 },
-      { type: "photo", src: "assets/playground/photo-03.jpg", alt: "[EDIT]", ratio: "4/5", caption: "[EDIT] Fujifilm X-T30 III", date: "2026.06", x: 1830, y: 0.14, w: 180 },
-      { type: "photo", src: "assets/playground/photo-04.jpg", alt: "[EDIT]", ratio: "3/2", caption: "[EDIT] Fujifilm X-T30 III", date: "2026.06", x: 1890, y: 0.6, w: 240 },
-      { type: "note", text: "learning guitar", x: 2200, y: 0.3, rotate: -5 },
-      { type: "sticker", src: "assets/playground/sticker-pick.png", alt: "Guitar pick", ratio: "1/1", x: 2260, y: 0.46, w: 90, rotate: 14 },
-      { type: "art", src: "assets/playground/art-02.jpg", alt: "[EDIT]", ratio: "1/1", caption: "[EDIT] Window light, gouache", date: "2026", tape: true, x: 2400, y: 0.18, w: 210, rotate: -2 },
-      { type: "photo", src: "assets/playground/photo-05.jpg", alt: "[EDIT]", ratio: "2/3", caption: "[EDIT] Fujifilm X-T30 III", date: "2026.07", x: 2680, y: 0.4, w: 210 },
-      { type: "art", src: "assets/playground/art-03.jpg", alt: "[EDIT]", ratio: "3/4", caption: "[EDIT] Sketchbook page", date: "2026", x: 2960, y: 0.16, w: 230, rotate: 1 },
-      { type: "note", text: "new hobby\nunlocked", x: 2980, y: 0.76, rotate: -3 },
-      { type: "photo", src: "assets/playground/photo-06.jpg", alt: "[EDIT]", ratio: "4/5", caption: "[EDIT] Fujifilm X-T30 III", date: "2026.08", x: 3270, y: 0.3, w: 250 }, */
+      { type: "note", text: "sorority\nsisters ->", x: 1590, y: 0.18, rotate: 4 },
+      { type: "photo", src: "assets/playground/dphil_photoshoot.jpg", alt: "DPhil Photoshoot with Line Sisters", ratio: "3/2", date: "2026.03", x: 1830, y: 0.14, w: 300 },
+      { type: "photo", src: "assets/playground/my_big.jpg", alt: "My sorority big and I", ratio: "4/5", date: "2026.04", x: 1890, y: 0.6, w: 200 },
+      { type: "note", text: "guitar!", x: 2200, y: 0.3, rotate: -5 },
+      { type: "art", src: "assets/playground/guitar.jpg", alt: "Squier by Fender Electric Guitar", ratio: "2/3", caption: "My first ever electric guitar", date: "2026.10", tape: true, x: 2400, y: 0.18, w: 210, rotate: -2 },
+      { type: "photo", src: "assets/playground/matcha3.jpg", alt: "Origin Lab @ San Francisco", caption: "Origin Lab @ San Francisco", ratio: "2/3", date: "2026.07", x: 2680, y: 0.4, w: 210 },
+      { type: "art", src: "assets/playground/matcha2.jpg", alt: "Raku @ New York", caption: "Raku @ New York", ratio: "3/4", date: "2026.", x: 2960, y: 0.16, w: 230, rotate: 1 },
+      { type: "note", text: "extreme matcha\nenthusiast..", x: 2980, y: 0.65, rotate: -3 },
+      { type: "photo", src: "assets/playground/matcha1.jpg", alt: "Kissaten HiFi @ San Francisco", caption: "Kissaten HiFi @ San Francisco", ratio: "3/2", date: "2026.08", x: 3270, y: 0.3, w: 250 },
+      { type: "photo", src: "assets/playground/matcha4.jpg", alt: "Maruwu Seicha @ San Francisco", caption: "Maruwu Seicha @ San Francisco", ratio: "4/5", date: "2026.08", x: 3300, y: 0.58, w: 200, rotate: 2 },
+      { type: "photo", src: "assets/playground/armenia1.jpg", alt: "Armenia", ratio: "3/2", x: 3620, y: 0.16, w: 330 },
+      { type: "note", text: "homeland 🇦🇲", x: 3700, y: 0.5, rotate: -4 },
+      { type: "art", src: "assets/playground/armenia2.jpg", alt: "Armenia", ratio: "2/3", tape: true, x: 4020, y: 0.36, w: 210, rotate: 2 },
+      { type: "photo", src: "assets/playground/armenia3.jpg", alt: "Armenia", ratio: "2/3", x: 4310, y: 0.2, w: 300 },
     ],
   },
 
   /* ======================================================================
-     CONTACT
+     CONTACTc 
      ====================================================================== */
   contact: {
     intro: "Recruiting for hardware roles, curious about a project, or just want to chat? Find me here.",
