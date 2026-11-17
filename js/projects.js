@@ -9,7 +9,7 @@
    ========================================================================== */
 (() => {
   "use strict";
-  const { $, $$, esc, txt, pad2, ph, href, ratioNum, MOTION, reduced, finePointer, dragScroll, markLoaded } = App;
+  const { $, $$, esc, txt, pad2, ph, href, ratioNum, MOTION, reduced, finePointer, dragScroll, markLoaded, coverOf } = App;
 
   const state = (App.state.projects = App.state.projects || { view: "grid", scroll: { grid: null, list: null } });
 
@@ -62,7 +62,7 @@
         const cw = Math.round(W * (mobile ? GRID.cardWMobile : GRID.cardW));
         // odd project count → use the list twice per unit so columns repeat cleanly
         const base = P.length % 2 ? [...P, ...P] : P.slice();
-        const h = (p) => GRID.numH + cw / ratioNum(p.cover?.ratio || "4/5") + GRID.labelH;
+        const h = (p) => GRID.numH + cw / ratioNum(coverOf(p).ratio || "4/5") + GRID.labelH;
         const avg = base.reduce((s, p) => s + h(p), 0) / base.length;
         const off = Math.round(avg * GRID.stagger);
         const rowsH = (list) => {
@@ -84,7 +84,7 @@
               const top = y + (col ? off : 0);
               html += `<a class="card" ${cardLink(p, n)} style="left:${Math.round(W * GRID.colX[col])}px;top:${Math.round(top)}px;width:${cw}px">
                 <span class="card__num">(${pad2(n)})</span>
-                <span class="card__img">${ph(p.cover, { ratio: p.cover?.ratio || "4/5" })}</span>
+                <span class="card__img">${ph(coverOf(p), { ratio: coverOf(p).ratio || "4/5" })}</span>
                 <span class="hl card__name">${txt(p.title)}</span>
                 <span class="card__cat">${txt(p.category)}</span>
               </a>`;
@@ -104,7 +104,7 @@
         const row = (p) => {
           const n = P.indexOf(p) + 1;
           return `<li><a class="prow" ${cardLink(p, n, `data-i="${n - 1}"`)}>
-            <span class="prow__thumb">${ph(p.cover, { ratio: "1/1" })}</span>
+            <span class="prow__thumb">${ph(coverOf(p), { ratio: "1/1" })}</span>
             <span class="prow__num">(${pad2(n)})</span>
             <span class="prow__name">${txt(p.title)}</span>
             <span class="prow__cat">${txt(p.category)}</span>
@@ -175,7 +175,7 @@
         const i = Number(row.dataset.i);
         if (i !== shown) {                       // instant swap between rows
           shown = i;
-          const cover = P[i].cover || {};
+          const cover = coverOf(P[i]);
           preview.innerHTML = ph(cover, { ratio: cover.ratio || "4/5" });
           markLoaded(preview);
         }

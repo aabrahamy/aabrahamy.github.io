@@ -203,6 +203,60 @@ endmodule`
         { type: "links", items: [ { label: "DevPost", href: "https://devpost.com/software/unbias-qtr7y3" } ] },
       ],
     },
+
+    {
+      slug: "systolic-array",
+      title: "Systolic Array Matrix Multiplier",
+      category: "(In Progress)",
+      year: "2026",
+      summary:
+        "A parametrized, output-stationary systolic array in SystemVerilog that computes C = A × B for N×N matrices. Every processing element owns one output value, and skew logic times the inputs so the right operands meet at the right cycle.",
+      meta: [
+        { label: "Tools", value: "SystemVerilog, Verilator" },
+      ],
+      blocks: [
+        { type: "diagram", src: "assets/projects/systolic-array/top-level.png", alt: "Top-level diagram of the N×N systolic array", caption: "A flows right, B flows down, and partial sums stay in place.", ratio: "11/10" },
+{ type: "section", label: "Problem", text: "Matrix multiplication is the workhorse of machine learning, and systolic arrays are how accelerators like Google's TPU do it efficiently. Instead of fetching operands from memory over and over, data flows through a grid of simple compute units that each reuse what passes by. I wanted to build one from scratch in SystemVerilog so I'd understand the dataflow, not just the diagram. Along the way, it pulled me into how systolic arrays are used in GPUs and AI accelerators." },
+        { type: "section", label: "How it works", text: "The array is an N×N grid of processing elements (PEs), each with a multiply-accumulate (MAC) unit and responsible for exactly one output element. Matrix A flows right and B flows down, while every partial sum stays in place inside its PE. That's what \"output-stationary\" means: only the operands move, and once they've all passed through, each PE holds its final C[i][j].\n\nN is a parameter, so I can change the matrix size without rewriting the grid." },
+        { type: "diagram", src: "assets/projects/systolic-array/skew-chain.png", alt: "Skew shift-register chains feeding the PE grid", caption: "Row i of A and column j of B are delayed by i and j cycles.", ratio: "1/1" },
+        { type: "section", label: "Skewing the inputs", text: "The catch is timing. PE(i,j) needs A[i][k] and B[k][j] on the same cycle, but the two values travel different distances to get there. The fix is a shift-register delay chain on every input: row i of A is delayed i cycles and column j of B is delayed j cycles. Both operands then reach PE(i,j) after i + j cycles, so it works on k = cycle − i − j.\n\nSince the array never needs the whole matrix up front, I used delay chains instead of pre-building skewed matrices." },
+        { type: "diagram", src: "assets/projects/systolic-array/pe.png", alt: "Processing element RTL", ratio: "3/2" },
+        { type: "section", label: "Processing element", text: "Each PE adds the product of its two inputs into a local accumulator and registers the operands onward to its right and bottom neighbors. The skew logic pads with zeros, and adding 0 × 0 leaves the sum alone, so the PEs don't need a valid signal. The accumulator has to be wide enough to hold the sum of N products (at least 2·DATA_WIDTH + log2(N) bits) or it can overflow." },
+        {
+          type: "code",
+          lang: "systemverilog",
+          code: `
+module processing_element #(
+    parameter int DATA_WIDTH = 8,
+    parameter int ACC_WIDTH  = 32
+) (
+    input  logic clk,
+    input  logic rst,
+    input  logic [DATA_WIDTH-1:0] a_in,
+    input  logic [DATA_WIDTH-1:0] b_in,
+    output logic [DATA_WIDTH-1:0] a_out,
+    output logic [DATA_WIDTH-1:0] b_out,
+    output logic [ACC_WIDTH-1:0]  acc_out
+);
+
+    always_ff @(posedge clk) begin
+        if (rst) begin
+            a_out   <= '0;
+            b_out   <= '0;
+            acc_out <= '0;
+        end else begin
+            a_out   <= a_in;
+            b_out   <= b_in;
+            acc_out <= acc_out + ACC_WIDTH'(a_in) * ACC_WIDTH'(b_in);
+        end
+    end
+
+endmodule`,
+        },
+        { type: "section", label: "Status", text: "I'm building this bottom-up, one module at a time with its own Verilator testbench and Makefile, the same way I did for my RV32I CPU. The PE has a self-checking testbench covering reset, a single multiply, accumulation across cycles, zero padding leaving the accumulator unchanged, and reset clearing everything.\n\nNext up: the shift-register delay chains, the generate-based top level that wires the grid together, and a full-array testbench." },
+        { type: "links", items: [ { label: "GitHub", href: "https://github.com/aabrahamy/2d_systolic_array" } ] },
+      ],
+    },
   
 /*
     {

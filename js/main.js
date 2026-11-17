@@ -87,6 +87,12 @@
   hooks.afterRender.push((el, route) => { traceKey = route.tab; redraw(); });
   if ("ResizeObserver" in window) new ResizeObserver(debounce(redraw, 120)).observe(page);
 
+  /* ---- the folder widens for a project article (CSS transition): once it
+     settles, let the PCB background + hint re-measure around the new shape --- */
+  $("#folder").addEventListener("transitionend", (e) => {
+    if (e.target === e.currentTarget && e.propertyName === "width") window.dispatchEvent(new Event("resize"));
+  });
+
   /* ---- skip link → focus the current page's heading --------------------- */
   document.addEventListener("click", (e) => {
     if (!e.target.closest("[data-skip]")) return;

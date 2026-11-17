@@ -125,6 +125,18 @@ window.App = (() => {
     });
   }
 
+
+  /** A project's cover image: its `cover`, or the first picture in its blocks. */
+  function coverOf(p = {}) {
+    if (p.cover && p.cover.src) return p.cover;
+    const blocks = p.blocks || [];
+    const pic = blocks.find((x) => (x.type === "image" || x.type === "diagram") && x.src);
+    if (pic) return { src: pic.src, alt: pic.alt, ratio: pic.ratio };
+    const pair = blocks.find((x) => x.type === "pair" && x.images && x.images[0] && x.images[0].src);
+    if (pair) return pair.images[0];
+    return p.cover || {};
+  }
+
   /* ---- shared state that survives page changes (memory only) ------------ */
   const state = {};
 
@@ -395,7 +407,7 @@ window.App = (() => {
   return {
     MOTION, reduced, isMobile, finePointer,
     $, $$, esc, txt, pad2, clamp, debounce, hash, rng, ratioNum, ratioCss, paras, lines,
-    BASE, MODE, asset, href, ph, markLoaded,
+    BASE, MODE, asset, href, ph, markLoaded, coverOf,
     state, views, hooks, dragScroll, lightbox, drawTraces,
     navigate, render, parseRoute,
     get currentEl() { return current?.el; },
