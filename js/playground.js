@@ -14,7 +14,9 @@
   const FLOATS = ["note", "sticker", "intro"];     // these get parallax
   const START = 900;                               // default x for items with no x: past the first screen (design width 820)
   const SPARKLE = (x, y, s, r) => `<svg class="sparkle" style="left:${x}%;top:${y}%;width:${s}px;transform:rotate(${r}deg)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M12 2c.6 4.6 2.4 7.4 10 10-7.6 2.6-9.4 5.4-10 10-.6-4.6-2.4-7.4-10-10 7.6-2.6 9.4-5.4 10-10z"/></svg>`;
-  const ARROW = `<svg viewBox="0 0 80 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 10c18-3 44 1 72-2"/><path d="M64 3l11 5-10 6"/></svg>`;
+  // 🇦🇲 in a note becomes this (Windows shows flag emoji as plain letters)
+  const FLAG_AM = `<svg class="pg-flag" viewBox="0 0 12 6" aria-label="Armenian flag" role="img"><rect width="12" height="2" fill="#D90012"/><rect y="2" width="12" height="2" fill="#0033A0"/><rect y="4" width="12" height="2" fill="#F2A800"/></svg>`;
+  const ARROW =`<svg viewBox="0 0 80 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 10c18-3 44 1 72-2"/><path d="M64 3l11 5-10 6"/></svg>`;
 
   /* ---- fill in defaults: missing x/y/w get placed after the previous
           item, zig-zagging high and low ------------------------------------ */
@@ -43,7 +45,8 @@
     }
     if (it.type === "note") {
       const [first, ...rest] = String(it.text || "").split("\n");
-      return `<p class="pg-item pg-note hand" style="${style};width:auto">${txt(first)}${rest.length ? `<span class="pg-note__l2">${rest.map(txt).join("<br>")}</span>` : ""}</p>`;
+      const line = (s) => txt(s).replace(/🇦🇲/g, FLAG_AM);
+      return `<p class="pg-item pg-note hand" style="${style};width:auto">${line(first)}${rest.length ? `<span class="pg-note__l2">${rest.map(line).join("<br>")}</span>` : ""}</p>`;
     }
     if (it.type === "sticker") {
       return `<div class="pg-item pg-sticker" style="${style}">${ph(it, { ratio: it.ratio || "1/1" })}</div>`;
@@ -103,8 +106,10 @@
         const baseHTML = base.join("") + swipe + end;
         const floatHTML = intro + floats.join("");
 
+        // the side copies stay clickable (near the loop seam they're what's on screen),
+        // but are hidden from screen readers and skipped by Tab
         const copies = (html, spacing) => [0, 1, 2].map((k) =>
-          `<div class="pg-copy" style="left:${Math.round(k * spacing)}px"${k === 1 ? "" : ' inert aria-hidden="true"'}>${html}</div>`).join("");
+          `<div class="pg-copy" style="left:${Math.round(k * spacing)}px"${k === 1 ? "" : ' aria-hidden="true"'}>${k === 1 ? html : html.replace(/class="pg-hit"/g, 'tabindex="-1" class="pg-hit"')}</div>`).join("");
         canvas.style.width = `${3 * L}px`;
         baseLayer.innerHTML = copies(baseHTML, L);
         floatLayer.innerHTML = copies(floatHTML.replace(/left:(\d+)px/g, (m, v) => `left:${Math.round(v * f)}px`), L * f);
