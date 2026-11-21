@@ -93,6 +93,20 @@
     if (e.target === e.currentTarget && e.propertyName === "width") window.dispatchEvent(new Event("resize"));
   });
 
+  /* ---- light / dark toggle (top right). Dark is the default; the choice is
+     remembered in this browser. The <head> script applies it before paint. --- */
+  const toggle = $("#themeToggle");
+  const themeMeta = $('meta[name="theme-color"]');
+  function setTheme(light, save) {
+    const root = document.documentElement;
+    if (light) root.dataset.theme = "light"; else delete root.dataset.theme;
+    toggle.setAttribute("aria-checked", String(light));
+    if (themeMeta) themeMeta.setAttribute("content", light ? "#ffffff" : "#0a0a0a");
+    if (save) { try { localStorage.setItem("theme", light ? "light" : "dark"); } catch { /* private mode */ } }
+  }
+  setTheme(document.documentElement.dataset.theme === "light", false);
+  toggle.addEventListener("click", () => setTheme(toggle.getAttribute("aria-checked") !== "true", true));
+
   /* ---- skip link → focus the current page's heading --------------------- */
   document.addEventListener("click", (e) => {
     if (!e.target.closest("[data-skip]")) return;

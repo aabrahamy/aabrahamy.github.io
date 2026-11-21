@@ -133,6 +133,23 @@
     const ex = { l: fr.left - 16, t: fr.top - (wide ? 16 : 70), r: fr.right + (wide ? 210 : 16), b: fr.bottom + 16 };
     const hitsFolder = (cx, cy, hw, hh) => cx + hw > ex.l && cx - hw < ex.r && cy + hh > ex.t && cy - hh < ex.b;
 
+    // the light/dark toggle (top right) sits on clear board: no parts, no traces under it
+    const tg = document.getElementById("themeToggle");
+    const tr = tg ? tg.getBoundingClientRect() : null;
+    const tx = tr ? { l: tr.left - 14, t: tr.top - 14, r: tr.right + 14, b: tr.bottom + 14 } : null;
+    const hitsToggle = (cx, cy, hw, hh) => !!tx && cx + hw > tx.l && cx - hw < tx.r && cy + hh > tx.t && cy - hh < tx.b;
+    const lineHitsToggle = (pts) => {
+      if (!tx) return false;
+      for (let i = 1; i < pts.length; i++) {
+        const a = pts[i - 1], b = pts[i], steps = Math.max(1, Math.ceil(Math.hypot(b.x - a.x, b.y - a.y) / 4));
+        for (let k = 0; k <= steps; k++) {
+          const x = a.x + ((b.x - a.x) * k) / steps, y = a.y + ((b.y - a.y) * k) / steps;
+          if (x > tx.l && x < tx.r && y > tx.t && y < tx.b) return true;
+        }
+      }
+      return false;
+    };
+
     // density: thin near the center, dense toward the edges and corners
     const edgeness = (x, y) => clamp(Math.max(Math.abs(x - W / 2) / (W / 2), Math.abs(y - H / 2) / (H / 2)), 0, 1);
 
@@ -141,7 +158,7 @@
     const items = [];   // { cx, cy, w, h, html, pins, label }
 
     const free = (cx, cy, w, h, margin = 14) =>
-      !hitsFolder(cx, cy, w / 2 + 4, h / 2 + 4) &&
+      !hitsFolder(cx, cy, w / 2 + 4, h / 2 + 4) && !hitsToggle(cx, cy, w / 2 + 4, h / 2 + 4) &&
       cx - w / 2 > 6 && cx + w / 2 < W - 6 && cy - h / 2 > 6 && cy + h / 2 < H - 6 &&
       placed.every((p) => Math.abs(p.cx - cx) > (p.w + w) / 2 + margin || Math.abs(p.cy - cy) > (p.h + h) / 2 + margin);
 
@@ -285,6 +302,9 @@
       }
     });
 
+    // drop any trace that would run under the toggle
+    for (let i = traces.length - 1; i >= 0; i--) if (lineHitsToggle(traces[i].pts)) traces.splice(i, 1);
+
     // any leftover passives get a short stub ending in a via, and a few free vias
     const vias = [];
     items.forEach((c) => {
@@ -292,6 +312,7 @@
         const p = c.pins[Math.floor(rand() * c.pins.length)];
         const len = R(16, 40);
         const end = { x: p.x + p.dx * len, y: p.y + p.dy * len };
+        if (lineHitsToggle([p, end])) return;                // keep the toggle clear
         traces.push({ pts: [{ x: p.x, y: p.y }, end], a: c.id, b: -1 });
         vias.push(end);
       }

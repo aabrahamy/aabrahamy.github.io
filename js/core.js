@@ -28,6 +28,7 @@ window.App = (() => {
     trailInk: "26, 26, 26", // RGB over the paper
     trailInkAlpha: 0.7,
     trailChalk: "217, 217, 217", // RGB over the black background
+    trailChalkLight: "60, 60, 60", // ...and over the white background in light mode
 
     // line boil on handwriting (js/effects.js)
     boilEvery: 120,         // ms between redraws (lower = jittery/fast)

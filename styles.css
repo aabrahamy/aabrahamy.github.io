@@ -76,6 +76,7 @@
   --pcb-lit-tint: #f2b8cf;       /* a powered component under the pink glow */
   --pcb-pulse: #cfcfcf;          /* the travelling signal */
   --pcb-glow-blur: 4px;          /* glow around lit traces */
+  --pcb-glow-rgb: 255, 255, 255;
   --pcb-glow-alpha: 0.35;
   --pcb-scale: 1.04;             /* powered component grows this much */
   --pcb-in: 250ms;               /* power on */
@@ -105,6 +106,11 @@
   --pin-lit-label: #ffffff;
   --pin-glow: 6px;               /* glow blur around the active trace */
   --pin-glow-color: rgba(242, 184, 207, 0.65);
+  --glow-blend: screen;          /* cursor glow over the board */
+  --folder-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    0 2px 4px rgba(0, 0, 0, 0.35),
+    0 26px 60px -18px rgba(0, 0, 0, 0.85);
   --dot-gap: 134px;    /* distance between dots (js reads this for the traces) */
   --dot-size: 1.5px;   /* dot radius */
   --dot-inset: 13px;   /* first row/column distance from the page edge */
@@ -122,6 +128,41 @@
   --noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 @supports (height: 100dvh) { :root { --vh: 100dvh; } }
+
+/* ---- LIGHT MODE (toggle at the top right, js/main.js) ----------------------
+   White around the folder, a pale circuit board, and plain white pages. */
+:root[data-theme="light"] {
+  --bg: #ffffff;
+  --tab-about: #ffffff;
+  --tab-projects: #ffffff;
+  --tab-playground: #ffffff;
+  --tab-contact: #ffffff;
+  --annotation: #2b2b2b;
+  --pcb-trace: #e4e4e1;
+  --pcb-comp: #dadad6;
+  --pcb-lit: #6f6f6f;
+  --pcb-lit-tint: #d97ba3;
+  --pcb-pulse: #555555;
+  --pcb-glow-rgb: 0, 0, 0;
+  --pcb-glow-alpha: 0.12;
+  --pin-pad: #d4d4d0;
+  --pin-pad-edge: #9a9a96;
+  --pin-trace-c: #b8b8b4;
+  --pin-label: #8a8a8a;
+  --pin-hover: #b07f95;
+  --pin-hover-label: #2b2b2b;
+  --pin-lit: #e48fb2;
+  --pin-lit-label: #141414;
+  --pin-glow: 5px;
+  --pin-glow-color: rgba(228, 143, 178, 0.5);
+  --glow-blend: multiply;
+  --folder-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.08),
+    0 2px 4px rgba(0, 0, 0, 0.06),
+    0 26px 60px -18px rgba(0, 0, 0, 0.22);
+  color-scheme: light;
+}
+:root[data-theme="light"] .page__paper { display: none; }   /* plain white pages: no dot grid or traces */
 
 /* ==========================================================================
    Base
@@ -148,7 +189,7 @@ body {
 }
 .pcb-trace.is-lit {
   stroke: var(--pcb-trace-lit);
-  filter: drop-shadow(0 0 var(--pcb-glow-blur) rgba(255, 255, 255, var(--pcb-glow-alpha)));
+  filter: drop-shadow(0 0 var(--pcb-glow-blur) rgba(var(--pcb-glow-rgb), var(--pcb-glow-alpha)));
   transition-duration: var(--pcb-in);
 }
 .pcb-via { stroke: var(--pcb-trace); stroke-width: 1.2; }
@@ -168,7 +209,7 @@ body {
   width: var(--glow-size); height: var(--glow-size);
   border-radius: 50%;
   background: radial-gradient(circle closest-side, var(--glow-color), transparent);
-  mix-blend-mode: screen;
+  mix-blend-mode: var(--glow-blend);
   opacity: 0;
   pointer-events: none;
   will-change: transform;
@@ -399,10 +440,7 @@ a.mono-link { text-decoration: underline; text-underline-offset: 4px; text-decor
   overflow: hidden;
   background-color: var(--page);   /* changes instantly with the tab */
   color-scheme: light;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.45),
-    0 2px 4px rgba(0, 0, 0, 0.35),
-    0 26px 60px -18px rgba(0, 0, 0, 0.85);
+  box-shadow: var(--folder-shadow);
 }
 
 /* paper: dot grid + traces + grain, fixed to the folder */
@@ -1093,6 +1131,8 @@ a.mono-link { text-decoration: underline; text-underline-offset: 4px; text-decor
   margin: 0;
   padding: 56px 64px 24px;
   border: 0;
+  --bg: #0b0b0b;                 /* the lightbox stays dark */
+  --annotation: #ecebe6;
   background: rgba(10, 10, 10, 0.92);
   color: var(--annotation);
   --page: var(--annotation);
@@ -1160,17 +1200,58 @@ a.ledger__row:hover, a.ledger__row:focus-visible,
 @media (hover: none), (pointer: coarse), (max-width: 767px) { .ink-trail { display: none; } }
 
 /* ==========================================================================
+   Light / dark toggle (top right of the window, js/main.js)
+   ========================================================================== */
+.theme-toggle {
+  position: fixed;
+  top: 14px; right: 18px;
+  z-index: 10000;                  /* top layer: above the board, folder and film grain */
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 4px;
+  border: 0;
+  background: none;
+  color: var(--pin-label);
+  font: 500 11px/1 var(--font-mono);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+.theme-toggle:hover, .theme-toggle:focus-visible { color: var(--pin-hover-label); }
+.theme-toggle:focus-visible { outline: 2px solid var(--pin-lit); outline-offset: 2px; }
+.theme-toggle__track {
+  position: relative;
+  width: 40px; height: 21px;
+  border: 1px solid var(--pin-trace-c);
+  border-radius: 11px;
+  transition: border-color 0.3s ease;
+}
+.theme-toggle__knob {
+  position: absolute;
+  top: 2.5px; left: 2.5px;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--pin-pad);
+  transition: transform 0.3s var(--ease-out), background-color 0.3s ease;
+}
+.theme-toggle[aria-checked="true"] .theme-toggle__track { border-color: var(--pin-lit); }
+.theme-toggle[aria-checked="true"] .theme-toggle__knob { transform: translateX(19px); background: var(--pin-lit); }
+
+/* ==========================================================================
    11. Mobile (< 768px)
    ========================================================================== */
 @media (max-width: 767px) {
   :root {
     --frame: 12px;
     --gutter: 12px;
-    --fh: calc(var(--vh) - 70px - var(--frame));   /* room for the tab row */
+    --fh: calc(var(--vh) - 96px - var(--frame));   /* room for the toggle + tab row */
     --fw: calc(100vw - 2 * var(--gutter));
     --fw-wide: var(--fw);                           /* no widening on phones */
   }
-  .stage { padding: 70px var(--gutter) 0; align-items: flex-start; }
+  .stage { padding: 96px var(--gutter) 0; align-items: flex-start; }
+  .theme-toggle { top: 8px; right: 10px; }
   .folder, .folder[data-view="project"] { margin-right: 0; }
 
   /* pins along the top edge, with short vertical traces down to the folder */
@@ -1240,4 +1321,5 @@ a.ledger__row:hover, a.ledger__row:focus-visible,
   .pcb-comp, .pcb-trace { transition-duration: var(--dur-fade); }
   .card__img .ph, .pager__thumb .ph { transition: none; }
   .folder { transition: none; }
+  .theme-toggle__knob, .theme-toggle__track { transition: none; }
 }

@@ -22,6 +22,18 @@
   <!-- Works out where the site lives ("/" or "/<repo>/" on GitHub Pages) so
        deep links like /projects/rv32i-cpu load correctly, restores the path
        after a 404.html redirect, then loads the stylesheet from there. -->
+  <!-- Light / dark mode: dark is the default; a saved choice is applied before
+       anything paints so there's no flash. The toggle itself is wired in js/main.js. -->
+  <script>
+    (function () {
+      var t = null;
+      try { t = localStorage.getItem("theme"); } catch (e) {}
+      if (t === "light") {
+        document.documentElement.dataset.theme = "light";
+        document.querySelector('meta[name="theme-color"]').setAttribute("content", "#ffffff");
+      }
+    })();
+  </script>
   <script>
     (function () {
       var ROUTES = ["about", "projects", "playground", "contact"];
@@ -68,6 +80,11 @@
     <svg class="pcb-hint__arrow" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></svg>
   </div>
   <a class="skip-link" href="#main" data-skip>Skip to content</a>
+
+  <!-- light / dark switch (js/main.js) -->
+  <button class="theme-toggle" id="themeToggle" type="button" role="switch" aria-checked="false" aria-label="Light mode">
+    <span class="theme-toggle__track" aria-hidden="true"><span class="theme-toggle__knob"></span></span>
+  </button>
 
   <!-- the melting-title SVG filters get added in here by js/effects.js -->
   <svg class="svg-defs" id="svgDefs" aria-hidden="true" focusable="false" width="0" height="0"></svg>

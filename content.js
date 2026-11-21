@@ -205,6 +205,7 @@ endmodule`
       ],
     },
 
+    /*
     {
       slug: "systolic-array",
       title: "Systolic Array Matrix Multiplier",
@@ -259,7 +260,7 @@ endmodule`,
       ],
     },
   
-/*
+
     {
       slug: "personal-computer",
       title: "Personal Computer",

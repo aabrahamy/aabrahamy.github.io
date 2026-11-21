@@ -94,7 +94,7 @@
         ctx.lineWidth = MOTION.trailWidth * (0.25 + 0.75 * f);
         ctx.strokeStyle = inside(p)
           ? `rgba(${MOTION.trailInk}, ${(MOTION.trailInkAlpha * f).toFixed(3)})`
-          : `rgba(${MOTION.trailChalk}, ${(0.9 * f).toFixed(3)})`;
+          : `rgba(${document.documentElement.dataset.theme === "light" ? MOTION.trailChalkLight : MOTION.trailChalk}, ${(0.9 * f).toFixed(3)})`;
         ctx.beginPath();
         ctx.moveTo(from.x, from.y);
         if (i === 0) ctx.lineTo(to.x, to.y);
